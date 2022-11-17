@@ -8,11 +8,11 @@ let memberUC = null;
 describe("Member test", () => {
     beforeEach(() => {
         mockMemberResult = {
-            getAllMember: jest.fn([mockMember.member]),
-            getMemberById: jest.fn(mockMember.member),
-            getMemberByStatus: jest.fn(mockMember.member),
-            addMember : jest.fn(mockMember.member),
-            updateMemberStatus: jest.fn(true)
+            getAllMember: jest.fn().mockReturnValue([mockMember.member]),
+            getMemberById: jest.fn().mockReturnValue(mockMember.member),
+            getMemberByStatus: jest.fn().mockReturnValue(mockMember.member),
+            addMember : jest.fn().mockReturnValue(mockMember.member),
+            updateMemberStatus: jest.fn().mockReturnValue(true)
         }
        
         memberUC = new MemberUseCase(mockMemberResult)
@@ -51,7 +51,7 @@ describe("Member test", () => {
 
             expect(res.isSuccess).toBeFalsy();
             expect(res.statusCode).toEqual(404);
-            expect(res.reason).toHaveProperty("member not found!");
+            expect(res.reason).toEqual("member not found!");
             
         })
     })

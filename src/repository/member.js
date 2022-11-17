@@ -10,10 +10,10 @@ class MemberRepository {
     return result;
   }
 
-  async getMemberById(code) {
+  async getMemberById(id) {
     const result = await this._MemberModel.findOne({
       where: {
-        code,
+        id,
       },
     });
     return result;
