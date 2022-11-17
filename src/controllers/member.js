@@ -15,7 +15,7 @@ module.exports = {
     try {
       const { id } = req.params;
 
-      const result = await req.getMemberById(id);
+      const result = await req.memberUC.getMemberById(id);
 
       if (!result.isSuccess) {
         return res
@@ -36,7 +36,7 @@ module.exports = {
         email: req.body.email,
       };
 
-      const result = await req.addMember(member);
+      const result = await req.memberUC.addMember(member);
 
       if (!result.isSuccess) {
         return res

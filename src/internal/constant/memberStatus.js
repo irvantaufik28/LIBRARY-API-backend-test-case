@@ -1,0 +1,5 @@
+module.exports = {
+  BORROW: 'BORROW',
+  NOT_BORROWING: 'NOT BORROWING',
+  PENALY: 'PENALTY',
+};

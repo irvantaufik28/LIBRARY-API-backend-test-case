@@ -1,7 +1,8 @@
 class MemberUseCase {
-  constructor(memberRepository, has) {
+  constructor(memberRepository, func, memberStatus) {
     this._memberRepository = memberRepository;
-    this._has = has;
+    this._func = func;
+    this._memberStatus = memberStatus;
   }
 
   async getAllMember(filters) {
@@ -54,6 +55,20 @@ class MemberUseCase {
         return result;
       }
     }
+    // member.code = await this._func.generateRandomCode();
+    // console.log(member.code)
+    // console.log(member.code)
+    // console.log(member.code)
+    // console.log(member.code)
+    // console.log(member.code)
+    member.status = await this._memberStatus.NOT_BORROWING;
+
+    const newMember = await this._memberRepository.addMember(member);
+
+    result.isSuccess = true;
+    result.statusCode = 201;
+    result.data = newMember;
+    return result;
   }
 }
 module.exports = MemberUseCase;

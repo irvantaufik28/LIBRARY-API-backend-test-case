@@ -5,8 +5,8 @@ class MemberRepository {
     this._MemberModel = Member;
   }
 
-  async getAllMember(filter) {
-    const result = await this._MemberModel.findAll(filter);
+  async getAllMember() {
+    const result = await this._MemberModel.findAll();
     return result;
   }
 
@@ -25,6 +25,11 @@ class MemberRepository {
         code,
       },
     });
+    return result;
+  }
+
+  async addMember(member) {
+    const result = await this._MemberModel.create(member);
     return result;
   }
 }
