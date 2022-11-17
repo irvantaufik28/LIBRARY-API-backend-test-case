@@ -1,6 +1,7 @@
 class MemberUseCase {
-  constructor(memberRepository) {
+  constructor(memberRepository, has) {
     this._memberRepository = memberRepository;
+    this._has = has;
   }
 
   async getAllMember(filters) {
@@ -37,6 +38,22 @@ class MemberUseCase {
     result.statusCode = 200;
     result.data = member;
     return result;
+  }
+
+  async addMember(member) {
+    let result = {
+      isSuccess: false,
+      statusCode: 404,
+      reason: null,
+      data: null,
+    };
+    const members = await this._memberRepository.getAllMember();
+    for (let i = 0; i < members.length; i += 1) {
+      if (members[i].email === member.email) {
+        result.reason = 'member already Registed!';
+        return result;
+      }
+    }
   }
 }
 module.exports = MemberUseCase;
