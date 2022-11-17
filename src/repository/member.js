@@ -5,15 +5,15 @@ class MemberRepository {
     this._MemberModel = Member;
   }
 
-  async getAllMember(filter) {
-    const result = await this._MemberModel.findAll(filter);
+  async getAllMember() {
+    const result = await this._MemberModel.findAll();
     return result;
   }
 
-  async getMemberById(code) {
+  async getMemberById(id) {
     const result = await this._MemberModel.findOne({
       where: {
-        code,
+        id,
       },
     });
     return result;
@@ -25,6 +25,20 @@ class MemberRepository {
         code,
       },
     });
+    return result;
+  }
+
+  async getMemberByEmail(email) {
+    const result = await this._MemberModel.findOne({
+      where: {
+        email,
+      },
+    });
+    return result;
+  }
+
+  async addMember(member) {
+    const result = await this._MemberModel.create(member);
     return result;
   }
 }

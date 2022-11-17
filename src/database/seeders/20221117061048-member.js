@@ -6,14 +6,26 @@ module.exports = {
       {
         code: "M001",
         name: "Angga",
+        email : "angga@mail.com",
+        status : "NOT BORROWING",
+        createdAt: new Date(),
+        updatedAt: new Date()
     },
     {
         code: "M002",
         name: "Ferry",
+        email: "ferry@mail.com",
+        status: "BORROW",
+        createdAt: new Date(),
+        updatedAt: new Date()
     },
     {
         code: "M003",
         name: "Putri",
+        status: "PENALTY",
+        email: "putri@mail.com",
+        createdAt: new Date(),
+        updatedAt: new Date()
     },
     ], {});
   },
