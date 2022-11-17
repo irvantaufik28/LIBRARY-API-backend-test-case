@@ -43,7 +43,7 @@ class BooksRepository {
   }
 
   async updateBooks(books, id) {
-    const result = await this._BooksModel.findOne(books, {
+    const result = await this._BooksModel.update(books, {
       where: {
         id,
       },
@@ -52,7 +52,7 @@ class BooksRepository {
   }
 
   async deleteBooks(id) {
-    const result = await this._BooksModel.findOne({
+    const result = await this._BooksModel.destroy({
       where: {
         id,
       },
