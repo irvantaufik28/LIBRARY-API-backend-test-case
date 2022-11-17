@@ -44,23 +44,19 @@ class MemberUseCase {
   async addMember(member) {
     let result = {
       isSuccess: false,
-      statusCode: 404,
+      statusCode: 400,
       reason: null,
       data: null,
     };
-    const members = await this._memberRepository.getAllMember();
-    for (let i = 0; i < members.length; i += 1) {
-      if (members[i].email === member.email) {
-        result.reason = 'member already Registed!';
-        return result;
-      }
+    // check exist Email on DataBase if email already registed status = 400 failed
+    const members = await this._memberRepository.getMemberByEmail(member.email);
+    if (members !== null) {
+      result.reason = 'email already registerd!';
+      return result;
     }
-    // member.code = await this._func.generateRandomCode();
-    // console.log(member.code)
-    // console.log(member.code)
-    // console.log(member.code)
-    // console.log(member.code)
-    // console.log(member.code)
+    // generate random code member
+    member.code = await this._func.generateRandomCode();
+    // when a member is registered for the first time, it has status NOT BORROWING
     member.status = await this._memberStatus.NOT_BORROWING;
 
     const newMember = await this._memberRepository.addMember(member);

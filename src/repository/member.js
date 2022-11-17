@@ -28,6 +28,15 @@ class MemberRepository {
     return result;
   }
 
+  async getMemberByEmail(email) {
+    const result = await this._MemberModel.findOne({
+      where: {
+        email,
+      },
+    });
+    return result;
+  }
+
   async addMember(member) {
     const result = await this._MemberModel.create(member);
     return result;
