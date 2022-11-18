@@ -59,11 +59,11 @@ describe("Borrow Test", () => {
         expect(res.statusCode).toEqual(200);
         expect(res.data).toHaveProperty("id");
         expect(res.data).toHaveProperty("memberId");
-        expect(res.data).toHaveProperty("deadlibe");
+        expect(res.data).toHaveProperty("deadline");
       });
       test("should isSuccess = false StatusCode = 404 data null", async () => {
         mockBorrowResult.getBorrowById = jest.fn().mockReturnValue(null);
-        borrowUC = new borrowUC(mockBorrowResult, mockBorrowDetails);
+        borrowUC = new BorrowUseCase(mockBorrowResult, mockBorrowDetails, mockMemberResult);
 
         let res = await borrowUC.getBorrowById(1);
 
@@ -74,36 +74,18 @@ describe("Borrow Test", () => {
     });
     describe("getOrderByMemberId", () => {
       test("should isSuccess = true statusCode = 200, and type data is object", async () => {
-        let res = await borrowUC.getByMemberId(1);
+        let res = await borrowUC.getBorrowByMemberId(1);
         expect(res.isSuccess).toBeTruthy();
         expect(res.statusCode).toEqual(200);
         expect(res.data).toHaveProperty("id");
         expect(res.data).toHaveProperty("memberId");
-        expect(res.data).toHaveProperty("deadlibe");
+        expect(res.data).toHaveProperty("deadline");
       });
       test("should isSuccess = false StatusCode = 404 data null and message member not found!", async () => {
-        mockMemberResult.getBorrowById = jest.fn().mockReturnValue(null);
-        borrowUC = new borrowUC(
-          mockBorrowResult,
-          mockBorrowDetails,
-          mockMemberResult
-        );
+        mockBorrowResult.getBorrowByMemberId = jest.fn().mockReturnValue(null);
+        borrowUC = new BorrowUseCase(mockBorrowResult);
 
-        let res = await borrowUC.getBorrowById(1);
-
-        expect(res.isSuccess).toBeFalsy();
-        expect(res.statusCode).toEqual(404);
-        expect(res.reason).toEqual("member not found!");
-      });
-      test("should isSuccess = false StatusCode = 404 data null borrow not found", async () => {
-        mockMemberResult.getBorrowById = jest.fn().mockReturnValue(null);
-        borrowUC = new borrowUC(
-          mockBorrowResult,
-          mockBorrowDetails,
-          mockMemberResult
-        );
-
-        let res = await borrowUC.getBorrowById(1);
+        let res = await borrowUC.getBorrowByMemberId(1);
 
         expect(res.isSuccess).toBeFalsy();
         expect(res.statusCode).toEqual(404);
