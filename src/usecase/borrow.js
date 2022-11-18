@@ -72,6 +72,13 @@ class BorrowUseCase {
       data: null,
     };
 
+    const checkAvailableBooks = await this.checkAvailableBooks(items);
+    if (!checkAvailableBooks.isSuccess) {
+      result.statusCode = 400;
+      result.reason = checkAvailableBooks.reason;
+      return result;
+    }
+
     let borrow = await this._borrowRepository.getPendingBorrowByMemberId(
       memberId,
     );
@@ -145,6 +152,25 @@ class BorrowUseCase {
     }
   }
 
+  async checkAvailableBooks(items) {
+    let result = {
+      isSuccess: true,
+      reason: null,
+    };
+    for (let i = 0; i < items.length; i += 1) {
+      let book = await this._booksRepository.getBooksById(items[i].id);
+      let { qty } = items[i];
+      let { stock } = book;
+
+      if (qty > stock) {
+        result.isSuccess = false;
+        result.reason = `Book ${book.title} not Available`;
+        return result;
+      }
+    }
+    return result;
+  }
+
   async sumbitedBorrow(id) {
     let result = {
       isSuccess: false,
@@ -188,7 +214,6 @@ class BorrowUseCase {
       );
 
       const pendingQty = this._.map(pendingBorrow, 'qty');
-      console.log(pendingQty)
       const pendingTotalBooks = this._.sum(pendingQty);
       const sumbitedQty = this._.map(sumbitedBorrow, 'qty');
       const sumbitedTotalBooks = this._.sum(sumbitedQty);
