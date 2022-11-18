@@ -6,7 +6,7 @@ class BorrowUseCase {
     booksRepository,
     borrowStatus,
     memberStatus,
-    has
+    has,
   ) {
     this._borrowRepository = borrowRepository;
     this._borrowDetailRepository = borrowDetailsRepository;
@@ -73,7 +73,7 @@ class BorrowUseCase {
     };
 
     let borrow = await this._borrowRepository.getPendingBorrowByMemberId(
-      memberId
+      memberId,
     );
     if (borrow === null) {
       const newBorrow = {
@@ -84,12 +84,11 @@ class BorrowUseCase {
     }
     await this.addBorrowDetails(borrow.id, items);
     const newBorrow = await this._borrowRepository.getPendingBorrowByMemberId(
-      memberId
+      memberId,
     );
-    const detailBorrow =
-      await this._borrowDetailRepository.getBorrowDetailsByBorrowId(
-        newBorrow.dataValues.id
-      );
+    const detailBorrow = await this._borrowDetailRepository.getBorrowDetailsByBorrowId(
+      newBorrow.dataValues.id,
+    );
     const dataBorrow = {
       id: newBorrow.id,
       memberId: newBorrow.memberId,
@@ -119,14 +118,13 @@ class BorrowUseCase {
           qty,
         };
 
-        const verifyBorrowDetail =
-          await this._borrowDetailRepository.getBorrowDetailsByBorrowIdAndBooksId(
-            borrowId,
-            book.id
-          );
+        const verifyBorrowDetail = await this._borrowDetailRepository.getBorrowDetailsByBorrowIdAndBooksId(
+          borrowId,
+          book.id,
+        );
         if (qty === 0) {
           await this._borrowDetailRepository.deleteBorrowDetails(
-            verifyBorrowDetail.id
+            verifyBorrowDetail.id,
           );
           return;
         }
@@ -136,11 +134,11 @@ class BorrowUseCase {
           };
           await this._borrowDetailRepository.updateBorrowDetails(
             updateBorrowDetailValue,
-            verifyBorrowDetail.id
+            verifyBorrowDetail.id,
           );
         } else {
           await this._borrowDetailRepository.addBorrowDetails(
-            borrowDetailsValue
+            borrowDetailsValue,
           );
         }
       }
@@ -154,6 +152,17 @@ class BorrowUseCase {
       reason: null,
     };
     const borrow = await this._borrowRepository.getBorrowByid(id);
+
+    // check whether the borrow data is available
+
+    if (borrow === null) {
+      result.statusCode = 404;
+      result.reason = 'borrow not found!';
+      return result;
+    }
+
+    // check the data array of objects whether there are objects with PENDING status. if not there then error message.
+
     const statusValues = ['COMPLETED', 'CANCELED', 'SUMBITED'];
     for (let i = 0; i < statusValues.length; i += 1) {
       if (borrow.status === statusValues[i]) {
@@ -161,33 +170,39 @@ class BorrowUseCase {
         return result;
       }
     }
-    // TODO member tidak bisa pinjam lebih dari 2 buku
+
     const verifyBorrowDetail = await this._borrowRepository.getSumbitedBorrowByMemberId(borrow.memberId);
 
+    // Check if members borrow more than 2 books
+    // checks whether the member has a borrow with the status of SUMBITED
     if (verifyBorrowDetail !== null) {
-      const verifyBorrow = await this._borrowDetailRepository.getBorrowDetailsByBorrowId(
+      const sumbitedBorrow = await this._borrowDetailRepository.getBorrowDetailsByBorrowId(
         verifyBorrowDetail.id,
       );
       const pendingBorrow = await this._borrowDetailRepository.getBorrowDetailsByBorrowId(
         borrow.id,
       );
+
       const pendingQty = this._.map(pendingBorrow, 'qty');
       const pendingTotalBooks = this._.sum(pendingQty);
-      const qty = this._.map(verifyBorrow, 'qty');
-      const OldtotalBooks = this._.sum(qty);
+      const sumbitedQty = this._.map(sumbitedBorrow, 'qty');
+      const sumbitedTotalBooks = this._.sum(sumbitedQty);
+      const newTotalBooks = pendingTotalBooks + sumbitedTotalBooks;
 
-      const newTotalBooks = pendingTotalBooks + OldtotalBooks;
       if (newTotalBooks >= 2) {
         result.reason = 'Members may not borrow more than 2 books';
         return result;
       }
     }
 
+    //   check if member status PENALTY
+
     const member = await this._memberRepository.getMemberById(borrow.memberId);
     if (member.status === this._memberStatus.PENALTY) {
       result.reason = 'member cannot borrow, members get penalized';
       return result;
     }
+
     let dayToAdd = 5;
     let currentDate = new Date();
     const statusBorrowValue = {
