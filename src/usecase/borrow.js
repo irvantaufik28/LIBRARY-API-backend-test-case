@@ -6,6 +6,7 @@ class BorrowUseCase {
     booksRepository,
     borrowStatus,
     memberStatus,
+    has,
   ) {
     this._borrowRepository = borrowRepository;
     this._borrowDetailRepository = borrowDetailsRepository;
@@ -13,6 +14,7 @@ class BorrowUseCase {
     this._booksRepository = booksRepository;
     this._borrowStatus = borrowStatus;
     this._memberStatus = memberStatus;
+    this._ = has;
   }
 
   async getAllBorrow() {
@@ -65,12 +67,29 @@ class BorrowUseCase {
   async addBorrow(memberId, items) {
     let result = {
       isSuccess: false,
-      statusCode: 404,
+      statusCode: 400,
       reason: null,
       data: null,
     };
 
-    let borrow = await this._borrowRepository.getPendingBorrowByMemberId(memberId);
+    // Check if members borrow more than 2 books
+    const verifyQty = await this._.map(items, 'qty');
+    const qty = this._.sum(verifyQty);
+    if (qty > 2) {
+      result.reason = 'Members may not borrow more than 2 books';
+      return result;
+    }
+
+    // Borrowed books are not borrowed by other members
+    const checkAvailableBooks = await this.checkAvailableBooks(items);
+    if (!checkAvailableBooks.isSuccess) {
+      result.reason = checkAvailableBooks.reason;
+      return result;
+    }
+
+    let borrow = await this._borrowRepository.getPendingBorrowByMemberId(
+      memberId,
+    );
     if (borrow === null) {
       const newBorrow = {
         memberId,
@@ -79,8 +98,12 @@ class BorrowUseCase {
       borrow = await this._borrowRepository.addBorrow(newBorrow);
     }
     await this.addBorrowDetails(borrow.id, items);
-    const newBorrow = await this._borrowRepository.getPendingBorrowByMemberId(memberId);
-    const detailBorrow = await this._borrowDetailRepository.getBorrowDetailsByBorrowId(newBorrow.dataValues.id);
+    const newBorrow = await this._borrowRepository.getPendingBorrowByMemberId(
+      memberId,
+    );
+    const detailBorrow = await this._borrowDetailRepository.getBorrowDetailsByBorrowId(
+      newBorrow.dataValues.id,
+    );
     const dataBorrow = {
       id: newBorrow.id,
       memberId: newBorrow.memberId,
@@ -110,59 +133,163 @@ class BorrowUseCase {
           qty,
         };
 
-        const verifyBorrowDetail = await this._borrowDetailRepository.getBorrowDetailsByBorrowIdAndBooksId(borrowId, book.id);
+        const verifyBorrowDetail = await this._borrowDetailRepository.getBorrowDetailsByBorrowIdAndBooksId(
+          borrowId,
+          book.id,
+        );
         if (qty === 0) {
-          await this._borrowDetailRepository.deleteBorrowDetails(verifyBorrowDetail.id);
+          await this._borrowDetailRepository.deleteBorrowDetails(
+            verifyBorrowDetail.id,
+          );
           return;
         }
         if (verifyBorrowDetail !== null) {
           const updateBorrowDetailValue = {
             qty,
           };
-          await this._borrowDetailRepository.updateBorrowDetails(updateBorrowDetailValue, verifyBorrowDetail.id);
+          await this._borrowDetailRepository.updateBorrowDetails(
+            updateBorrowDetailValue,
+            verifyBorrowDetail.id,
+          );
         } else {
-          await this._borrowDetailRepository.addBorrowDetails(borrowDetailsValue);
+          await this._borrowDetailRepository.addBorrowDetails(
+            borrowDetailsValue,
+          );
         }
       }
     }
   }
 
-  async sumbitedBorrow(borrowId) {
+  async checkAvailableBooks(items) {
+    let result = {
+      isSuccess: false,
+      reason: null,
+    };
+    for (let i = 0; i < items.length; i += 1) {
+      let book = await this._booksRepository.getBooksById(items[i].id);
+      let { qty } = items[i];
+      let { stock } = book;
+
+      if (qty > stock) {
+        result.reason = `Book ${book.title} not Available`;
+        return result;
+      }
+    }
+    result.isSuccess = true;
+    return result;
+  }
+
+  async sumbitedBorrow(id) {
     let result = {
       isSuccess: false,
       statusCode: 400,
       reason: null,
     };
-    const borrow = await this._borrowRepository.getBorrowById(borrowId);
-    const statusValues = ['COMPLETED', 'CANCELED'];
+    const borrow = await this._borrowRepository.getBorrowByid(id);
+
+    // check whether the borrow data is available
+
+    if (borrow === null) {
+      result.statusCode = 404;
+      result.reason = 'borrow not found!';
+      return result;
+    }
+
+    // check the data array of objects whether there are objects with PENDING status. if not there then error message & Update status borrow to CANCELED.
+
+    const statusValues = ['COMPLETED', 'CANCELED', 'SUMBITED'];
     for (let i = 0; i < statusValues.length; i += 1) {
       if (borrow.status === statusValues[i]) {
+        const borrowStatusValue = {
+          status: this._memberStatus.CANCELED,
+        };
+        await this._borrowRepository.updateBorrow(borrowStatusValue, borrow.id);
         result.reason = `cannot sumbit, status borrow is ${statusValues[i]}`;
         return result;
       }
     }
-    // TODO member tidak bisa pinjam lebih dari 2 buku
-    const member = await this._memberRepository.getBorrowById(borrow.memberId);
-    if (member.status === this._memberStatus.PENALTY) {
+
+    const verifyBorrowDetail = await this._borrowRepository.getSumbitedBorrowByMemberId(borrow.memberId);
+
+    // Check if members borrow more than 2 books
+    // checks whether the member has a borrow with the status of SUMBITED
+    if (verifyBorrowDetail !== null) {
+      const sumbitedBorrow = await this._borrowDetailRepository.getBorrowDetailsByBorrowId(
+        verifyBorrowDetail.id,
+      );
+      const pendingBorrow = await this._borrowDetailRepository.getBorrowDetailsByBorrowId(
+        borrow.id,
+      );
+
+      const pendingQty = this._.map(pendingBorrow, 'qty');
+      const pendingTotalBooks = this._.sum(pendingQty);
+      const sumbitedQty = this._.map(sumbitedBorrow, 'qty');
+      const sumbitedTotalBooks = this._.sum(sumbitedQty);
+      const newTotalBooks = pendingTotalBooks + sumbitedTotalBooks;
+
+      if (newTotalBooks > 2) {
+        const borrowStatusValue = {
+          status: this._memberStatus.CANCELED,
+        };
+        await this._borrowRepository.updateBorrow(borrowStatusValue, borrow.id);
+        result.reason = 'Members may not borrow more than 2 books';
+        return result;
+      }
+    }
+
+    //   check if member status PENALTY
+
+    const member = await this._memberRepository.getMemberById(borrow.memberId);
+
+    if (member.dataValues.status === this._memberStatus.PENALTY) {
+      const borrowStatusValue = {
+        status: this._memberStatus.CANCELED,
+      };
+      await this._borrowRepository.updateBorrow(borrowStatusValue, borrow.id);
       result.reason = 'member cannot borrow, members get penalized';
       return result;
     }
-    let dayToAdd = 5;
+
+    let dayToAdd = 7;
     let currentDate = new Date();
     const statusBorrowValue = {
       status: this._borrowStatus.SUMBITED,
       deadline: new Date(currentDate.getTime() + dayToAdd * 86400000),
     };
     // TODO UPDATE STOCK BOOK
+    await this.updateStock(borrow.id, statusBorrowValue.status);
     await this._borrowRepository.updateBorrow(statusBorrowValue, borrow.id);
     const statusMemberValues = {
       status: this._memberStatus.BORROW,
     };
-    await this._memberRepository.updateMember(statusMemberValues, borrow.memberId);
+    await this._memberRepository.updateMember(
+      statusMemberValues,
+      borrow.memberId,
+    );
 
     result.isSuccess = true;
     result.statusCode = 200;
     return result;
+  }
+
+  async updateStock(borrowId, status) {
+    const borrow = await this._borrowDetailRepository.getBorrowDetailsByBorrowId(borrowId);
+
+    for (let i = 0; i < borrow.length; i += 1) {
+      let book = await this._booksRepository.getBooksById(borrow[i].booksId);
+
+      if (status === this._borrowStatus.SUMBITED) {
+        const sumbitedUpdateValue = {
+          stock: book.stock - borrow[i].qty,
+        };
+        await this._booksRepository.updateBooks(sumbitedUpdateValue, book.id);
+      } else if (status === this._borrowStatus.COMPLETED) {
+        const completedUpdateValue = {
+          stock: book.stock + borrow[i].qty,
+        };
+        await this._booksRepository.updateBooks(completedUpdateValue, book.id);
+      }
+    }
   }
 }
 
