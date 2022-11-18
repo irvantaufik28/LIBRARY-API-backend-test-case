@@ -5,12 +5,14 @@ class BorrowUseCase {
     memberRepository,
     booksRepository,
     borrowStatus,
+    memberStatus,
   ) {
     this._borrowRepository = borrowRepository;
     this._borrowDetailRepository = borrowDetailsRepository;
     this._memberRepository = memberRepository;
     this._booksRepository = booksRepository;
     this._borrowStatus = borrowStatus;
+    this._memberStatus = memberStatus;
   }
 
   async getAllBorrow() {
@@ -70,11 +72,8 @@ class BorrowUseCase {
 
     let borrow = await this._borrowRepository.getPendingBorrowByMemberId(memberId);
     if (borrow === null) {
-    //   let dayToAdd = 5;
-    //   let currentDate = new Date();
       const newBorrow = {
         memberId,
-        // deadline: new Date(currentDate.getTime() + dayToAdd * 86400000),
         status: this._borrowStatus.PENDING,
       };
       borrow = await this._borrowRepository.addBorrow(newBorrow);
@@ -126,6 +125,44 @@ class BorrowUseCase {
         }
       }
     }
+  }
+
+  async sumbitedBorrow(borrowId) {
+    let result = {
+      isSuccess: false,
+      statusCode: 400,
+      reason: null,
+    };
+    const borrow = await this._borrowRepository.getBorrowById(borrowId);
+    const statusValues = ['COMPLETED', 'CANCELED'];
+    for (let i = 0; i < statusValues.length; i += 1) {
+      if (borrow.status === statusValues[i]) {
+        result.reason = `cannot sumbit, status borrow is ${statusValues[i]}`;
+        return result;
+      }
+    }
+    // TODO member tidak bisa pinjam lebih dari 2 buku
+    const member = await this._memberRepository.getBorrowById(borrow.memberId);
+    if (member.status === this._memberStatus.PENALTY) {
+      result.reason = 'member cannot borrow, members get penalized';
+      return result;
+    }
+    let dayToAdd = 5;
+    let currentDate = new Date();
+    const statusBorrowValue = {
+      status: this._borrowStatus.SUMBITED,
+      deadline: new Date(currentDate.getTime() + dayToAdd * 86400000),
+    };
+    // TODO UPDATE STOCK BOOK
+    await this._borrowRepository.updateBorrow(statusBorrowValue, borrow.id);
+    const statusMemberValues = {
+      status: this._memberStatus.BORROW,
+    };
+    await this._memberRepository.updateMember(statusMemberValues, borrow.memberId);
+
+    result.isSuccess = true;
+    result.statusCode = 200;
+    return result;
   }
 }
 

@@ -37,6 +37,15 @@ class MemberRepository {
     return result;
   }
 
+  async updateMember(member, id) {
+    const result = await this._MemberModel.update(member, {
+      where: {
+        id,
+      },
+    });
+    return result;
+  }
+
   async addMember(member) {
     const result = await this._MemberModel.create(member);
     return result;
