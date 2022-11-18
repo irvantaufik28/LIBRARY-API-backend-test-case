@@ -4,6 +4,7 @@ const memberBooks = require('../controllers/books');
 const router = express.Router();
 
 router.get('/', memberBooks.getAllBooks);
+router.get('/available', memberBooks.getAllAvailableBooksAndQty);
 router.get('/:id', memberBooks.getBooksById);
 router.post('/add', memberBooks.addBooks);
 router.put('/update/:id', memberBooks.updateBooks);

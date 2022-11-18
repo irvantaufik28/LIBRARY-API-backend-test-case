@@ -1,6 +1,7 @@
 class BooksUseCase {
-  constructor(booksRepository) {
+  constructor(booksRepository, has) {
     this._booksRepository = booksRepository;
+    this._ = has;
   }
 
   async getAllBooks(filters) {
@@ -15,6 +16,27 @@ class BooksUseCase {
     result.isSuccess = true;
     result.statusCode = 200;
     result.data = books;
+    return result;
+  }
+
+  async getAllAvailableBooksAndQty(filters) {
+    let result = {
+      isSuccess: true,
+      statusCode: null,
+      reason: null,
+      data: null,
+    };
+
+    const books = await this._booksRepository.getAllBooks(filters);
+    const availableBooks = books.filter((e) => e.stock > 0);
+    let newBooks = {
+      totalBooks: books.length,
+      totalAvailableBooks: await this._.sumBy(availableBooks, 'stock'),
+      availableBooks,
+    };
+    result.isSuccess = true;
+    result.statusCode = 200;
+    result.data = newBooks;
     return result;
   }
 

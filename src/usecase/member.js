@@ -1,8 +1,11 @@
 class MemberUseCase {
-  constructor(memberRepository, func, memberStatus) {
+  constructor(memberRepository, borrowRepository, borrowDetailsRepository, func, memberStatus, has) {
     this._memberRepository = memberRepository;
+    this._borrowRepository = borrowRepository;
+    this._borrowDetailsRepository = borrowDetailsRepository;
     this._func = func;
     this._memberStatus = memberStatus;
+    this._ = has;
   }
 
   async getAllMember(filters) {
@@ -34,6 +37,9 @@ class MemberUseCase {
       result.reason = 'member not found!';
       return result;
     }
+    const borrow = await this._borrowRepository.getSumbitedBorrowByMemberId(id);
+    const borrowDetails = await this._borrowDetailsRepository.getBorrowDetailsByBorrowId(borrow.id);
+    console.log(borrowDetails)
 
     result.isSuccess = true;
     result.statusCode = 200;
