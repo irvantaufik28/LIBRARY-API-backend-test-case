@@ -17,7 +17,6 @@ module.exports = (sequelize, DataTypes) => {
     memberId: DataTypes.INTEGER,
     deadline: DataTypes.DATE,
     status: DataTypes.STRING,
-    totalQty: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Borrow',
