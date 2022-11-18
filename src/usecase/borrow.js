@@ -129,14 +129,14 @@ class BorrowUseCase {
     }
   }
 
-  async sumbitedBorrow(borrowId) {
+  async sumbitedBorrow(id) {
     let result = {
       isSuccess: false,
       statusCode: 400,
       reason: null,
     };
-    const borrow = await this._borrowRepository.getBorrowById(borrowId);
-    const statusValues = ['COMPLETED', 'CANCELED'];
+    const borrow = await this._borrowRepository.getBorrowByid(id);
+    const statusValues = ['COMPLETED', 'CANCELED', 'SUMBITED'];
     for (let i = 0; i < statusValues.length; i += 1) {
       if (borrow.status === statusValues[i]) {
         result.reason = `cannot sumbit, status borrow is ${statusValues[i]}`;
@@ -145,10 +145,14 @@ class BorrowUseCase {
     }
     // TODO member tidak bisa pinjam lebih dari 2 buku
     const verifyBorrowDetail = await this._borrowRepository.getSumbitedBorrowByMemberId(borrow.memberId);
+    console.log(verifyBorrowDetail)
     if (verifyBorrowDetail !== null) {
-      console.log(verifyBorrowDetail)
+       const verifyBorrow = await this._borrowDetailRepository.getBorrowDetailsByBorrowId(verifyBorrowDetail.id)
+       const qty = this._.map(verifyBorrow, 'qty');
+      console.log(qty)
     }
-    const member = await this._memberRepository.getBorrowById(borrow.memberId);
+    return
+    const member = await this._memberRepository.getMemberById(borrow.memberId);
     if (member.status === this._memberStatus.PENALTY) {
       result.reason = 'member cannot borrow, members get penalized';
       return result;

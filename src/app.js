@@ -6,6 +6,7 @@ const serverError = require('./middlerware/serverError');
 const func = require('./libs/function');
 const memberStatus = require('./internal/constant/memberStatus');
 const borrowStatus = require('./internal/constant/borrowStatus');
+const has = require('loadsh')
 
 const app = express();
 
@@ -24,7 +25,7 @@ const routerBorrow = require('./routes/borrow');
 
 const memberUC = new MemberUseCase(new MemberRepository(), func, memberStatus);
 const booksUC = new BooksUseCase(new BooksRepository());
-const borrowUC = new BorrowUseCase(new BorrowRepository(), new BorrowDetailsRepository(), new MemberRepository(), new BooksRepository(), borrowStatus);
+const borrowUC = new BorrowUseCase(new BorrowRepository(), new BorrowDetailsRepository(), new MemberRepository(), new BooksRepository(), borrowStatus, memberStatus, has);
 
 app.use((req, res, next) => {
   req.memberUC = memberUC;

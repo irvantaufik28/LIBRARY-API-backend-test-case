@@ -38,7 +38,7 @@ class BorrowRepostiory {
     const result = await this._BorrowModel.findOne({
       where: {
         memberId,
-        status: 'PENDING',
+        status: 'SUMBITED',
       },
     });
     return result;
