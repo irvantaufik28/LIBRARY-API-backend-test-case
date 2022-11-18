@@ -72,6 +72,8 @@ class BorrowUseCase {
       data: null,
     };
 
+    // Borrowed books are not borrowed by other members
+
     const checkAvailableBooks = await this.checkAvailableBooks(items);
     if (!checkAvailableBooks.isSuccess) {
       result.statusCode = 400;
@@ -242,7 +244,7 @@ class BorrowUseCase {
       return result;
     }
 
-    let dayToAdd = 5;
+    let dayToAdd = 7;
     let currentDate = new Date();
     const statusBorrowValue = {
       status: this._borrowStatus.SUMBITED,
