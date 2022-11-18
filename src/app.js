@@ -2,11 +2,11 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
+const has = require('lodash');
 const serverError = require('./middlerware/serverError');
 const func = require('./libs/function');
 const memberStatus = require('./internal/constant/memberStatus');
 const borrowStatus = require('./internal/constant/borrowStatus');
-const has = require('loadsh')
 
 const app = express();
 

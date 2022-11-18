@@ -67,7 +67,7 @@ module.exports = {
 
   sumbitedBorrow: async (req, res, next) => {
     try {
-      const id = req.params.id
+      const { id } = req.params;
       const result = await req.borrowUC.sumbitedBorrow(id);
 
       if (!result.isSuccess) {

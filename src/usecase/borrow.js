@@ -161,11 +161,15 @@ class BorrowUseCase {
       return result;
     }
 
-    // check the data array of objects whether there are objects with PENDING status. if not there then error message.
+    // check the data array of objects whether there are objects with PENDING status. if not there then error message & Update status borrow to CANCELED.
 
     const statusValues = ['COMPLETED', 'CANCELED', 'SUMBITED'];
     for (let i = 0; i < statusValues.length; i += 1) {
       if (borrow.status === statusValues[i]) {
+        const borrowStatusValue = {
+          status: this._memberStatus.CANCELED,
+        };
+        await this._borrowRepository.updateBorrow(borrowStatusValue, borrow.id);
         result.reason = `cannot sumbit, status borrow is ${statusValues[i]}`;
         return result;
       }
@@ -184,12 +188,17 @@ class BorrowUseCase {
       );
 
       const pendingQty = this._.map(pendingBorrow, 'qty');
+      console.log(pendingQty)
       const pendingTotalBooks = this._.sum(pendingQty);
       const sumbitedQty = this._.map(sumbitedBorrow, 'qty');
       const sumbitedTotalBooks = this._.sum(sumbitedQty);
       const newTotalBooks = pendingTotalBooks + sumbitedTotalBooks;
 
-      if (newTotalBooks >= 2) {
+      if (newTotalBooks > 2) {
+        const borrowStatusValue = {
+          status: this._memberStatus.CANCELED,
+        };
+        await this._borrowRepository.updateBorrow(borrowStatusValue, borrow.id);
         result.reason = 'Members may not borrow more than 2 books';
         return result;
       }
@@ -198,7 +207,12 @@ class BorrowUseCase {
     //   check if member status PENALTY
 
     const member = await this._memberRepository.getMemberById(borrow.memberId);
-    if (member.status === this._memberStatus.PENALTY) {
+
+    if (member.dataValues.status === this._memberStatus.PENALTY) {
+      const borrowStatusValue = {
+        status: this._memberStatus.CANCELED,
+      };
+      await this._borrowRepository.updateBorrow(borrowStatusValue, borrow.id);
       result.reason = 'member cannot borrow, members get penalized';
       return result;
     }
