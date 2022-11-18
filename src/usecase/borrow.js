@@ -6,6 +6,7 @@ class BorrowUseCase {
     booksRepository,
     borrowStatus,
     memberStatus,
+    has,
   ) {
     this._borrowRepository = borrowRepository;
     this._borrowDetailRepository = borrowDetailsRepository;
@@ -13,6 +14,7 @@ class BorrowUseCase {
     this._booksRepository = booksRepository;
     this._borrowStatus = borrowStatus;
     this._memberStatus = memberStatus;
+    this._ = has;
   }
 
   async getAllBorrow() {
@@ -142,6 +144,10 @@ class BorrowUseCase {
       }
     }
     // TODO member tidak bisa pinjam lebih dari 2 buku
+    const verifyBorrowDetail = await this._borrowRepository.getSumbitedBorrowByMemberId(borrow.memberId);
+    if (verifyBorrowDetail !== null) {
+      console.log(verifyBorrowDetail)
+    }
     const member = await this._memberRepository.getBorrowById(borrow.memberId);
     if (member.status === this._memberStatus.PENALTY) {
       result.reason = 'member cannot borrow, members get penalized';

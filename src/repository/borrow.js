@@ -34,6 +34,16 @@ class BorrowRepostiory {
     return result;
   }
 
+  async getSumbitedBorrowByMemberId(memberId) {
+    const result = await this._BorrowModel.findOne({
+      where: {
+        memberId,
+        status: 'PENDING',
+      },
+    });
+    return result;
+  }
+
   async addBorrow(borrow) {
     const result = await this._BorrowModel.create(borrow);
     return result;
