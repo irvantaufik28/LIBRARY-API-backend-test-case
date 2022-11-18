@@ -5,11 +5,32 @@ class BorrowDetailsRepository {
     this._borrowDetails = BorrowDetails;
   }
 
+  async addBorrowDetails(borrow) {
+    const result = await this._borrowDetails.create(borrow);
+    return result;
+  }
+
   async getBorrowDetailsByBorrowId(borrowId) {
-    const result = await this._borrowDetails.findOne({
+    const result = await this._borrowDetails.findAll({
       where: {
         borrowId,
       },
+    });
+    return result;
+  }
+
+  async deleteBorrowDetails(id) {
+    const result = await this._borrowDetails.destroy({
+      where: {
+        id,
+      },
+    });
+    return result;
+  }
+
+  async updateBorrowDetails(borrow, id) {
+    const result = await this._borrowDetails.update(borrow, {
+      where: { id },
     });
     return result;
   }

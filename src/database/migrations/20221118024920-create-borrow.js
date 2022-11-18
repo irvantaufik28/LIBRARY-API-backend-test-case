@@ -14,8 +14,8 @@ module.exports = {
       deadline: {
         type: Sequelize.DATE
       },
-      isReturned: {
-        type: Sequelize.BOOLEAN
+      status: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
