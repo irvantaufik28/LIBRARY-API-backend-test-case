@@ -99,7 +99,11 @@ class BorrowUseCase {
       };
       borrow = await this._borrowRepository.addBorrow(newBorrow);
     }
-    await this.addBorrowDetails(borrow.id, items);
+    const borrowDetails = await this.addBorrowDetails(borrow.id, items);
+    if (!borrowDetails) {
+      result.reason = borrowDetails.reason;
+      return result;
+    }
     const newBorrow = await this._borrowRepository.getPendingBorrowByMemberId(
       memberId,
     );
@@ -171,6 +175,10 @@ class BorrowUseCase {
     };
     for (let i = 0; i < items.length; i += 1) {
       let book = await this._booksRepository.getBooksById(items[i].id);
+      if (book === null) {
+        result.reason = 'Book not found';
+        return result;
+      }
       let { qty } = items[i];
       let { stock } = book;
 
@@ -246,7 +254,9 @@ class BorrowUseCase {
     const member = await this._memberRepository.getMemberById(borrow.memberId);
 
     if (member.dataValues.status === this._memberStatus.PENALTY) {
-      const penalty = await this._penaltyRepository.getPenaltyByMemberId(member.id);
+      const penalty = await this._penaltyRepository.getPenaltyByMemberId(
+        member.id,
+      );
       let expriedPenalty = Date.parse(penalty.expiredAt);
       let currentDate = Date.parse(new Date());
       //  check expried penalty
@@ -331,7 +341,10 @@ class BorrowUseCase {
       const memberUpdateValue = {
         status: this._memberStatus.PENALTY,
       };
-      await this._memberRepository.updateMember(memberUpdateValue, updatedBorrow.memberId);
+      await this._memberRepository.updateMember(
+        memberUpdateValue,
+        updatedBorrow.memberId,
+      );
     }
     await this.updateStock(id, this._borrowStatus.COMPLETED);
 
