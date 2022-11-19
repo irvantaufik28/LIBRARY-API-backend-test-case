@@ -29,9 +29,12 @@ class BooksUseCase {
 
     const books = await this._booksRepository.getAllBooks(filters);
     const availableBooks = books.filter((e) => e.stock > 0);
+    let totalBooks = books.length;
+    let totalAvailableBooks = await this._.sumBy(availableBooks, 'stock');
     let newBooks = {
-      totalBooks: books.length,
-      totalAvailableBooks: await this._.sumBy(availableBooks, 'stock'),
+      totalBooks,
+      totalAvailableBooks,
+      totalBorowedBooks: totalBooks - totalAvailableBooks,
       availableBooks,
     };
     result.isSuccess = true;

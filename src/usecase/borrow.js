@@ -99,11 +99,7 @@ class BorrowUseCase {
       };
       borrow = await this._borrowRepository.addBorrow(newBorrow);
     }
-    const borrowDetails = await this.addBorrowDetails(borrow.id, items);
-    if (!borrowDetails) {
-      result.reason = borrowDetails.reason;
-      return result;
-    }
+    await this.addBorrowDetails(borrow.id, items);
     const newBorrow = await this._borrowRepository.getPendingBorrowByMemberId(
       memberId,
     );
@@ -221,14 +217,21 @@ class BorrowUseCase {
       }
     }
 
-    const verifyBorrowDetail = await this._borrowRepository.getSumbitedBorrowByMemberId(borrow.memberId);
-
+    const verifyBorrow = await this._borrowRepository.getAllSumbitedBorrowByMemberId(
+      borrow.memberId,
+    );
     // Check if members borrow more than 2 books
     // checks whether the member has a borrow with the status of SUMBITED
-    if (verifyBorrowDetail !== null) {
-      const sumbitedBorrow = await this._borrowDetailRepository.getBorrowDetailsByBorrowId(
-        verifyBorrowDetail.id,
-      );
+    if (verifyBorrow !== null) {
+      let sumbitedBorrow = [];
+
+      for (let i = 0; i < verifyBorrow.length; i += 1) {
+        let borrowDetails = await this._borrowDetailRepository.getBorrowDetailsByBorrowId(
+          verifyBorrow[i].id,
+        );
+        sumbitedBorrow.push(borrowDetails[0]);
+      }
+
       const pendingBorrow = await this._borrowDetailRepository.getBorrowDetailsByBorrowId(
         borrow.id,
       );
@@ -257,6 +260,7 @@ class BorrowUseCase {
       const penalty = await this._penaltyRepository.getPenaltyByMemberId(
         member.id,
       );
+
       let expriedPenalty = Date.parse(penalty.expiredAt);
       let currentDate = Date.parse(new Date());
       //  check expried penalty
