@@ -11,6 +11,16 @@ module.exports = {
     }
   },
 
+  getAllAvailableBooksAndQty: async (req, res, next) => {
+    try {
+      const result = await req.booksUC.getAllAvailableBooksAndQty();
+
+      return res.status(result.statusCode).json(resData.success(result.data));
+    } catch (error) {
+      next(error);
+    }
+  },
+
   getBooksById: async (req, res, next) => {
     try {
       const { id } = req.params;

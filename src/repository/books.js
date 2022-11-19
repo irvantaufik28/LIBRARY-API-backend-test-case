@@ -28,10 +28,10 @@ class BooksRepository {
     return result;
   }
 
-  async getBooksByStatus(email) {
+  async getBooksByStatus(status) {
     const result = await this._BooksModel.findOne({
       where: {
-        email,
+        status,
       },
     });
     return result;
