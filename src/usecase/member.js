@@ -1,8 +1,9 @@
 class MemberUseCase {
-  constructor(memberRepository, borrowRepository, borrowDetailsRepository, func, memberStatus, has) {
+  constructor(memberRepository, borrowRepository, borrowDetailsRepository, booksRepository, func, memberStatus, has) {
     this._memberRepository = memberRepository;
     this._borrowRepository = borrowRepository;
     this._borrowDetailsRepository = borrowDetailsRepository;
+    this._booksRepositoryRepository = booksRepository;
     this._func = func;
     this._memberStatus = memberStatus;
     this._ = has;
@@ -37,13 +38,57 @@ class MemberUseCase {
       result.reason = 'member not found!';
       return result;
     }
-    const borrow = await this._borrowRepository.getSumbitedBorrowByMemberId(id);
-    const borrowDetails = await this._borrowDetailsRepository.getBorrowDetailsByBorrowId(borrow.id);
-    console.log(borrowDetails)
+    const borrow = await this._borrowRepository.getAllSumbitedBorrowByMemberId(id);
+
+    if (borrow !== null) {
+      let newBorrowDetails = [];
+      for (let i = 0; i < borrow.length; i += 1) {
+        let borrowDetails = await this._borrowDetailsRepository.getBorrowDetailsByBorrowId(borrow[i].id);
+        newBorrowDetails.push(borrowDetails[0]);
+      }
+      let books = await this._.map(newBorrowDetails, 'qty');
+      let booksId = await this._.map(newBorrowDetails, 'booksId');
+      let booksDetails = [];
+      for (let i = 0; i < booksId.length; i += 1) {
+        let getbook = await this._booksRepositoryRepository.getBooksById(booksId[i]);
+        booksDetails.push(getbook);
+      }
+
+      const newMemberValue = {
+        id: member.id,
+        name: member.name,
+        code: member.code,
+        email: member.email,
+        status: member.status,
+        totalBooks: await this._.sum(books),
+        createdAt: member.createdAt,
+        updatedAt: member.updatedAt,
+        borrowDetails: newBorrowDetails,
+        borrowedBook: booksDetails,
+      };
+
+      result.isSuccess = true;
+      result.statusCode = 200;
+      result.data = newMemberValue;
+      return result;
+    }
+
+    const memberValue = {
+      id: member.id,
+      name: member.name,
+      code: member.code,
+      email: member.email,
+      status: member.status,
+      totalBooks: 0,
+      createdAt: member.createdAt,
+      updatedAt: member.updatedAt,
+      borrow: [],
+      borrowedBook: [],
+    };
 
     result.isSuccess = true;
     result.statusCode = 200;
-    result.data = member;
+    result.data = memberValue;
     return result;
   }
 

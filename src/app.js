@@ -23,7 +23,7 @@ const routerMember = require('./routes/member');
 const routerBooks = require('./routes/books');
 const routerBorrow = require('./routes/borrow');
 
-const memberUC = new MemberUseCase(new MemberRepository(), new BorrowRepository(), new BorrowDetailsRepository(), func, memberStatus, has);
+const memberUC = new MemberUseCase(new MemberRepository(), new BorrowRepository(), new BorrowDetailsRepository(), new BooksRepository(), func, memberStatus, has);
 const booksUC = new BooksUseCase(new BooksRepository(), has);
 const borrowUC = new BorrowUseCase(new BorrowRepository(), new BorrowDetailsRepository(), new MemberRepository(), new BooksRepository(), borrowStatus, memberStatus, has);
 

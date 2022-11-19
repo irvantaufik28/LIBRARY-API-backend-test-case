@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 /*
  * For a detailed explanation regarding each configuration property, visit:
  * https://jestjs.io/docs/configuration
@@ -23,6 +24,7 @@ module.exports = {
   // collectCoverageFrom: undefined,
 
   // The directory where Jest should output its coverage files
+  // eslint-disable-next-line quotes
   coverageDirectory: "coverage",
 
   // An array of regexp pattern strings used to skip coverage collection
