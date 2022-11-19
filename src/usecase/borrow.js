@@ -4,6 +4,7 @@ class BorrowUseCase {
     borrowDetailsRepository,
     memberRepository,
     booksRepository,
+    penaltyRepository,
     borrowStatus,
     memberStatus,
     has,
@@ -12,6 +13,7 @@ class BorrowUseCase {
     this._borrowDetailRepository = borrowDetailsRepository;
     this._memberRepository = memberRepository;
     this._booksRepository = booksRepository;
+    this._penaltyRepository = penaltyRepository;
     this._borrowStatus = borrowStatus;
     this._memberStatus = memberStatus;
     this._ = has;
@@ -303,11 +305,11 @@ class BorrowUseCase {
 
     const updateBorrowValue = {
       dayReturned: new Date(),
-      statu: this._borrowStatus.COMPLETED,
+      status: this._borrowStatus.COMPLETED,
     };
     await this._borrowRepository.updateBorrow(updateBorrowValue, id);
-    const updatedBorrow = await this._borrowRepository.getBorrowById(id);
-    let dayReturnedValue = Date.parse(updatedBorrow.dayReturnedValue);
+    const updatedBorrow = await this._borrowRepository.getBorrowByid(id);
+    let dayReturnedValue = Date.parse(updatedBorrow.dayReturned);
     let deadlineValue = Date.parse(updatedBorrow.deadline);
 
     if (dayReturnedValue > deadlineValue) {
@@ -317,7 +319,7 @@ class BorrowUseCase {
         memberId: updatedBorrow.memberId,
         expiredAt: new Date(currentDate.getTime() + dayToAdd * 86400000),
       };
-      await this._penaltyRepository.createPenalty(penaltyValue);
+      await this._penaltyRepository.addPenalty(penaltyValue);
 
       const memberUpdateValue = {
         status: this._memberStatus.PENALTY,

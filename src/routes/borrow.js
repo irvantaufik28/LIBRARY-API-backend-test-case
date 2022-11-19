@@ -9,5 +9,6 @@ router.get('/:id', authorized.admin, borrowControllers.getBorrwoById);
 router.get('/member/:id', authorized.admin, borrowControllers.getBorrowByMemberId);
 router.post('/add', authorized.admin, borrowControllers.addBorrow);
 router.patch('/sumbited/:id', authorized.admin, borrowControllers.sumbitedBorrow);
+router.patch('/returned/:id', authorized.admin, borrowControllers.returnedBorrow);
 
 module.exports = router;

@@ -17,6 +17,7 @@ const MemberRepository = require('./repository/member');
 const BooksRepository = require('./repository/books');
 const BorrowRepository = require('./repository/borrow');
 const BorrowDetailsRepository = require('./repository/borrowDetails');
+const PenaltyRepository = require('./repository/penalty');
 
 const AuthUseCase = require('./usecase/auth');
 const MemberUseCase = require('./usecase/member');
@@ -31,7 +32,7 @@ const routerBorrow = require('./routes/borrow');
 const authUC = new AuthUseCase(new AuthRepository(), bcrypt, tokenManager);
 const memberUC = new MemberUseCase(new MemberRepository(), new BorrowRepository(), new BorrowDetailsRepository(), new BooksRepository(), func, memberStatus, has);
 const booksUC = new BooksUseCase(new BooksRepository(), has);
-const borrowUC = new BorrowUseCase(new BorrowRepository(), new BorrowDetailsRepository(), new MemberRepository(), new BooksRepository(), borrowStatus, memberStatus, has);
+const borrowUC = new BorrowUseCase(new BorrowRepository(), new BorrowDetailsRepository(), new MemberRepository(), new BooksRepository(), new PenaltyRepository(), borrowStatus, memberStatus, has);
 
 app.use((req, res, next) => {
   req.authUC = authUC;
