@@ -16,6 +16,8 @@ module.exports = (sequelize, DataTypes) => {
   Borrow.init({
     memberId: DataTypes.INTEGER,
     deadline: DataTypes.DATE,
+    dayOut: DataTypes.DATE,
+    dayReturned: DataTypes.DATE,
     status: DataTypes.STRING,
   }, {
     sequelize,

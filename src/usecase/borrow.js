@@ -107,6 +107,8 @@ class BorrowUseCase {
     const dataBorrow = {
       id: newBorrow.id,
       memberId: newBorrow.memberId,
+      dayOut: newBorrow.dayOut,
+      dayReturned: newBorrow.dayReturned,
       deadline: newBorrow.deadline,
       status: newBorrow.status,
       createdAt: newBorrow.createdAt,
@@ -255,6 +257,7 @@ class BorrowUseCase {
     const statusBorrowValue = {
       status: this._borrowStatus.SUMBITED,
       deadline: new Date(currentDate.getTime() + dayToAdd * 86400000),
+      dayOut: new Date(),
     };
     // TODO UPDATE STOCK BOOK
     await this.updateStock(borrow.id, statusBorrowValue.status);
