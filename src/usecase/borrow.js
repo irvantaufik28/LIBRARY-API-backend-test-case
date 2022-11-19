@@ -246,12 +246,19 @@ class BorrowUseCase {
     const member = await this._memberRepository.getMemberById(borrow.memberId);
 
     if (member.dataValues.status === this._memberStatus.PENALTY) {
-      const borrowStatusValue = {
-        status: this._memberStatus.CANCELED,
-      };
-      await this._borrowRepository.updateBorrow(borrowStatusValue, borrow.id);
-      result.reason = 'member cannot borrow, members get penalized';
-      return result;
+      const penalty = await this._penaltyRepository.getPenaltyByMemberId(member.id);
+      let expriedPenalty = Date.parse(penalty.expiredAt);
+      let currentDate = Date.parse(new Date());
+      //  check expried penalty
+      if (expriedPenalty > currentDate) {
+        const borrowStatusValue = {
+          status: this._memberStatus.CANCELED,
+        };
+        await this._borrowRepository.updateBorrow(borrowStatusValue, borrow.id);
+        result.reason = 'member cannot borrow, members get penalized';
+        return result;
+      }
+      await this._penaltyRepository.deletePenalty(penalty.id);
     }
 
     let dayToAdd = 7;
@@ -326,6 +333,7 @@ class BorrowUseCase {
       };
       await this._memberRepository.updateMember(memberUpdateValue, updatedBorrow.memberId);
     }
+    await this.updateStock(id, this._borrowStatus.COMPLETED);
 
     result.isSuccess = true;
     result.statusCode = 200;
