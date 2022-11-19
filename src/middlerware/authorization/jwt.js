@@ -20,9 +20,9 @@ const authorized = (authorization, isAdmin) => {
     let token = getToken(authorization);
     let payload = null;
 
-    payload = jwt.verify(token, process.env.JWT_KEY_SECRET);
+    payload = jwt.verify(token, process.env.ACCESS_TOKEN_KEY);
 
-    if (payload.is_admin !== isAdmin) {
+    if (payload.isAdmin !== isAdmin) {
       return null;
     }
 

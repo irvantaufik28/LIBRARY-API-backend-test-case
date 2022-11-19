@@ -7,7 +7,7 @@ class MemberRepository {
   }
 
   async getUserByUsernameOrEmail(usernameOrEmail) {
-    const result = await this._userModel.findOne({
+    const result = await this._AdminModel.findOne({
       where: {
         [Op.or]: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
       },
