@@ -275,6 +275,61 @@ class BorrowUseCase {
     return result;
   }
 
+  async returnedBorrow(id) {
+    let result = {
+      isSuccess: false,
+      statusCode: 400,
+      reason: null,
+    };
+    const borrow = await this._borrowRepository.getBorrowByid(id);
+
+    // check whether the borrow data is available
+
+    if (borrow === null) {
+      result.statusCode = 404;
+      result.reason = 'borrow not found!';
+      return result;
+    }
+
+    // check the data array of objects whether there are objects with PENDING status. if not there then error message & Update status borrow to CANCELED.
+
+    const statusValues = ['COMPLETED', 'CANCELED', 'PENDING'];
+    for (let i = 0; i < statusValues.length; i += 1) {
+      if (borrow.status === statusValues[i]) {
+        result.reason = `cannot COMPLETED, status borrow is ${statusValues[i]}`;
+        return result;
+      }
+    }
+
+    const updateBorrowValue = {
+      dayReturned: new Date(),
+      statu: this._borrowStatus.COMPLETED,
+    };
+    await this._borrowRepository.updateBorrow(updateBorrowValue, id);
+    const updatedBorrow = await this._borrowRepository.getBorrowById(id);
+    let dayReturnedValue = Date.parse(updatedBorrow.dayReturnedValue);
+    let deadlineValue = Date.parse(updatedBorrow.deadline);
+
+    if (dayReturnedValue > deadlineValue) {
+      let dayToAdd = 3;
+      let currentDate = new Date();
+      const penaltyValue = {
+        memberId: updatedBorrow.memberId,
+        expiredAt: new Date(currentDate.getTime() + dayToAdd * 86400000),
+      };
+      await this._penaltyRepository.createPenalty(penaltyValue);
+
+      const memberUpdateValue = {
+        status: this._memberStatus.PENALTY,
+      };
+      await this._memberRepository.updateMember(memberUpdateValue, updatedBorrow.memberId);
+    }
+
+    result.isSuccess = true;
+    result.statusCode = 200;
+    return result;
+  }
+
   async updateStock(borrowId, status) {
     const borrow = await this._borrowDetailRepository.getBorrowDetailsByBorrowId(borrowId);
 
