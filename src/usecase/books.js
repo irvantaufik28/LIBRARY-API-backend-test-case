@@ -81,6 +81,8 @@ class BooksUseCase {
       reason: null,
       data: null,
     };
+    books.available = books.stock;
+    books.borrowed = 0;
     const newbooks = await this._booksRepository.addBooks(books);
 
     result.isSuccess = true;

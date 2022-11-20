@@ -108,7 +108,7 @@ class MemberUseCase {
     // generate random code member
     member.code = await this._func.generateRandomCode();
     // when a member is registered for the first time, it has status NOT BORROWING
-    member.status = await this._memberStatus.NOT_BORROWING;
+    member.isPenalty = false;
 
     const newMember = await this._memberRepository.addMember(member);
 
