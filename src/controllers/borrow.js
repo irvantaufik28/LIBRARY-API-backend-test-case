@@ -2,6 +2,9 @@ const resData = require('../helper/response');
 
 module.exports = {
   getAllBorrow: async (req, res, next) => {
+    /*
+      #swagger.tags = ['Borrow']
+    */
     try {
       const result = await req.borrowUC.getAllBorrow();
 
@@ -12,6 +15,9 @@ module.exports = {
   },
 
   getBorrwoById: async (req, res, next) => {
+    /*
+      #swagger.tags = ['Borrow']
+    */
     try {
       const { id } = req.params;
 
@@ -29,6 +35,9 @@ module.exports = {
     }
   },
   getBorrowByMemberId: async (req, res, next) => {
+    /*
+      #swagger.tags = ['Borrow']
+    */
     try {
       const { id } = req.params;
 
@@ -47,6 +56,13 @@ module.exports = {
   },
 
   addBorrow: async (req, res, next) => {
+    /*
+      #swagger.tags = ['Borrow']
+       #swagger.requestBody = {
+      required: true,
+      schema: { $ref: "#/definitions/bodyAddBorrow" }
+      }
+      */
     try {
       const { memberId } = req.query;
       const { items } = req.body;
@@ -66,6 +82,9 @@ module.exports = {
   },
 
   sumbitedBorrow: async (req, res, next) => {
+    /*
+      #swagger.tags = ['Borrow']
+    */
     try {
       const { id } = req.params;
       const result = await req.borrowUC.sumbitedBorrow(id);
@@ -82,6 +101,9 @@ module.exports = {
     }
   },
   returnedBorrow: async (req, res, next) => {
+    /*
+      #swagger.tags = ['Borrow']
+    */
     try {
       const { id } = req.params;
       const result = await req.borrowUC.returnedBorrow(id);

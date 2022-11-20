@@ -1,0 +1,669 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PERPUSTAKAAN",
+    "description": "API ecommerce App for project platinum for customer, create by Maju Jaya",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "irvantaufik28@gmail.com"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/"
+    }
+  ],
+  "paths": {
+    "/api/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {},
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username_or_email": {
+                    "example": "admin"
+                  },
+                  "password": {
+                    "example": "password"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/books": {
+      "get": {
+        "tags": [
+          "Books"
+        ],
+        "description": "",
+        "parameters": [
+          
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/books/available": {
+      "get": {
+        "tags": [
+          "Books"
+        ],
+        "description": "",
+        "parameters": [
+          
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/books/{id}": {
+      "get": {
+        "tags": [
+          "Books"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/books/add": {
+      "post": {
+        "tags": [
+          "Books"
+        ],
+        "description": "",
+        "parameters": [
+
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "example": "A TIME TO KILL BY JOHN GRISHAM"
+                  },
+                  "code": {
+                    "example": "TTK"
+                  },
+                  "author": {
+                    "example": "JHON"
+                  },
+                  "stock": {
+                    "example": "3"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/books/update/{id}": {
+      "put": {
+        "tags": [
+          "Books"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "example": "A TIME TO KILL BY JOHN GRISHAM"
+                  },
+                  "code": {
+                    "example": "TUK"
+                  },
+                  "author": {
+                    "example": "JHON"
+                  },
+                  "stock": {
+                    "example": "3"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/books/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Books"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/borrow": {
+      "get": {
+        "tags": [
+          "Borrow"
+        ],
+        "description": "",
+        "parameters": [
+         
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/{borrowid}": {
+      "get": {
+        "tags": [
+          "Borrow"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "borrowid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/borrow/member/{id}": {
+      "get": {
+        "tags": [
+          "Borrow"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/borrow/add": {
+      "post": {
+        "tags": [
+          "Borrow"
+        ],
+        "description": "",
+        "parameters": [
+         
+          {
+            "name": "memberId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/bodyAddBorrow"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/borrow/sumbited/{id}": {
+      "patch": {
+        "tags": [
+          "Borrow"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/borrow/returned/{id}": {
+      "patch": {
+        "tags": [
+          "Borrow"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/member": {
+      "get": {
+        "tags": [
+          "Member"
+        ],
+        "description": "",
+        "parameters": [
+
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/member/{id}": {
+      "get": {
+        "tags": [
+          "Member"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/member/add": {
+      "post": {
+        "tags": [
+          "Member"
+        ],
+        "description": "",
+        "parameters": [
+          
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "example": "irvan "
+                  },
+                  "email": {
+                    "example": "irvantaufik28@gmail.com"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "successGetAllBooks": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          },
+          "message": {
+            "type": "string",
+            "example": "success"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "totalTitleBooks": {
+                "type": "number",
+                "example": 5
+              },
+              "totalBooks": {
+                "type": "number",
+                "example": 10
+              },
+              "totalAvailableBooks": {
+                "type": "number",
+                "example": 10
+              },
+              "totalBorowedBooks": {
+                "type": "number",
+                "example": 0
+              },
+              "books": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "title": {
+                      "type": "string",
+                      "example": "Harry Potter"
+                    },
+                    "code": {
+                      "type": "string",
+                      "example": "JK-45"
+                    },
+                    "author": {
+                      "type": "string",
+                      "example": "J.K Rowling"
+                    },
+                    "stock": {
+                      "type": "number",
+                      "example": 2
+                    },
+                    "borrowed": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "available": {
+                      "type": "number",
+                      "example": 2
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "example": "2022-11-20T13:40:14.833Z"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "example": "2022-11-20T13:40:14.833Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "successGetBooksById": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          },
+          "message": {
+            "type": "string",
+            "example": "success"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number",
+                "example": 3
+              },
+              "code": {
+                "type": "string",
+                "example": "TW-11"
+              },
+              "title": {
+                "type": "string",
+                "example": "Twilight"
+              },
+              "author": {
+                "type": "string",
+                "example": "Stephenie Meyer"
+              },
+              "stock": {
+                "type": "number",
+                "example": 2
+              },
+              "borrowed": {
+                "type": "number",
+                "example": 0
+              },
+              "available": {
+                "type": "number",
+                "example": 2
+              },
+              "borrowedBy": {
+                "type": "array",
+                "example": [],
+                "items": {}
+              }
+            }
+          }
+        }
+      },
+      "notAvailable": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "failed"
+          },
+          "message": {
+            "type": "string",
+            "example": "username or email not aviable"
+          }
+        }
+      },
+      "passwordNotMatch": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "failed"
+          },
+          "message": {
+            "type": "string",
+            "example": "password and confrim password not match"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "securityDefinitions": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
+    }
+  }
+}

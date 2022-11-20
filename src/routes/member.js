@@ -4,8 +4,8 @@ const memberController = require('../controllers/member');
 const router = express.Router();
 const authorized = require('../middlerware/authorization/jwt');
 
-router.get('/', authorized.admin, memberController.getAllMember);
-router.get('/:id', authorized.admin, memberController.getMemberById);
-router.post('/add', authorized.admin, memberController.addMember);
+router.get('/api/member', authorized.admin, memberController.getAllMember);
+router.get('/api/member/:id', authorized.admin, memberController.getMemberById);
+router.post('/api/member/add', authorized.admin, memberController.addMember);
 
 module.exports = router;

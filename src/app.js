@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const has = require('lodash');
 const bcrypt = require('bcrypt');
+const swaggerUi = require('swagger-ui-express');
 const serverError = require('./middlerware/serverError');
 const func = require('./libs/function');
 const tokenManager = require('./helper/tokenManager');
@@ -46,11 +47,19 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use('/api', routerAuth);
-app.use('/api/member', routerMember);
-app.use('/api/books', routerBooks);
-app.use('/api/borrow', routerBorrow);
+app.use('/', routerAuth);
+app.use('/', routerMember);
+app.use('/', routerBooks);
+app.use('/', routerBorrow);
 
 app.use(serverError);
+
+const swaggerDocument = require('./docs/docs.json');
+
+app.use(
+  '/docs',
+  swaggerUi.serveFiles(swaggerDocument),
+  swaggerUi.setup(swaggerDocument),
+);
 
 module.exports = app;
