@@ -21,7 +21,7 @@ module.exports = {
     try {
       const { id } = req.params;
 
-      const result = await req.borrowUC.getBorrwoById(id);
+      const result = await req.borrowUC.getBorrowById(id);
 
       if (!result.isSuccess) {
         return res
