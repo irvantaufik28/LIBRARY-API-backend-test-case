@@ -1,9 +1,14 @@
 require("dotenv").config();
 const MemberUseCase = require('../../usecase/member')
-const mockMember = require('../mock/member.mock')
+const mockBorrow = require("../mock/borrow.mock");
+const mockBorrowDetails = require("../mock/borrowDetails.mock");
+const mockBooks = require('../mock/books.mock')
+const mockMember = require("../mock/member.mock");
 const memberStatus = require('../../internal/constant/memberStatus')
+const has = require('lodash')
 
-let mockMemberResult = {}
+
+let mockMemberResult, mockBorrowResult, mockBorrowDetailsResult, mockBooksResult = {}
 let memberUC = null;
 
 describe("Member test", () => {
@@ -16,11 +21,20 @@ describe("Member test", () => {
             addMember : jest.fn().mockReturnValue(mockMember.member),
             updateMemberStatus: jest.fn().mockReturnValue(true)
         }
+        mockBorrowResult = {
+            getAllSumbitedBorrowByMemberId: jest.fn().mockReturnValue([mockBorrow.borrow]),
+        }
+        mockBorrowDetailsResult = {
+            getBorrowDetailsByBorrowId: jest.fn().mockReturnValue([mockBorrowDetails.items]),
+        }
+        mockBooksResult = {
+            getBooksById: jest.fn().mockReturnValue(mockBooks.books),
+        }
         func = {
-            generateRandomCode : jest.fn().mockReturnValue(true)
+            generateRandomCode : jest.fn().mockReturnValue('M231')
         }
        
-        memberUC = new MemberUseCase(mockMemberResult, func, memberStatus)
+        memberUC = new MemberUseCase(mockMemberResult, mockBorrowResult, mockBorrowDetailsResult, mockBooksResult, func, memberStatus, has)
     })
     describe('Get all member test', () => {
         test("should isSuccess = true statusCode = 200, and type data is array", async () => {
@@ -32,7 +46,7 @@ describe("Member test", () => {
             expect(res.data[0]).toHaveProperty("id");
             expect(res.data[0]).toHaveProperty("code");
             expect(res.data[0]).toHaveProperty("name");
-            expect(res.data[0]).toHaveProperty("status");
+            expect(res.data[0]).toHaveProperty("isPenalty");
             expect(res.data[0]).toHaveProperty("email");
         })
     })
@@ -70,7 +84,7 @@ describe("Member test", () => {
         }
         test("should isSuccess = true statusCode = 200, and type data is obj", async ()=>{
             mockMemberResult.getMemberByEmail = jest.fn().mockReturnValue(null)
-            memberUC = new MemberUseCase(mockMemberResult, func, memberStatus)
+            memberUC = new MemberUseCase(mockMemberResult, mockBorrowResult, mockBorrowDetailsResult, mockBooksResult, func, memberStatus, has)
             let res = await memberUC.addMember(newMember)
 
             expect(res.isSuccess).toBeTruthy();
@@ -78,7 +92,7 @@ describe("Member test", () => {
             expect(res.data).toHaveProperty("id");
             expect(res.data).toHaveProperty("code");
             expect(res.data).toHaveProperty("name");
-            expect(res.data).toHaveProperty("status");
+            expect(res.data).toHaveProperty("isPenalty");
             expect(res.data).toHaveProperty("email");
         })
     })

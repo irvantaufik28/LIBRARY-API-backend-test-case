@@ -1,9 +1,14 @@
 module.exports = {
-    borrow : 
-        {
-            id : 1,
-            memberId: 1,
-            deadline: "2022-09-07 09:36:06.000 +0700",
-        }
-    
+    borrow:
+    {
+        id: 11,
+        memberId: 2,
+        dayOut: null,
+        dayReturned: null,
+        deadline: null,
+        status: "PENDING",
+        createdAt: "2022-11-20T04:51:37.022Z",
+        updatedAt: "2022-11-20T04:51:37.022Z",
+    }
+
 }

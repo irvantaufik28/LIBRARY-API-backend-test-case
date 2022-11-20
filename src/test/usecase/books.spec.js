@@ -1,8 +1,14 @@
 require("dotenv").config();
 const BooksUseCase = require("../../usecase/books");
 const mockBooks = require("../mock/books.mock");
+const mockBorrow = require('../mock/borrow.mock')
+const mockMember = require('../mock/member.mock')
+const mockBorrowDetails = require('../mock/borrowDetails.mock')
+let has = require('lodash')
 
-let mockBooksResult = {};
+// booksRepository, borrowRepository, borrowDetailRepository, memberRepository, has
+
+let mockBooksResult, mockBorrowResult,mockBorrowDetailsResult, mockMemberResult = {};
 let booksUC = null;
 
 describe("Books test", () => {
@@ -15,8 +21,14 @@ describe("Books test", () => {
       updateBooks: jest.fn().mockReturnValue(true),
       deleteBooks: jest.fn().mockReturnValue(true),
     };
+    mockBorrowResult = {
+      getBorrowById: jest.fn().mockReturnValue(mockBorrow.borrow)
+    } 
+    mockBorrowDetailsResult = {
+      getBorrowDetailsByBooksId: jest.fn().mockReturnValue([mockBorrowDetails.items])
+    }
 
-    booksUC = new BooksUseCase(mockBooksResult);
+    booksUC = new BooksUseCase(mockBooksResult, mockBorrowResult,mockBorrowDetailsResult, mockMemberResult, has);
   });
   describe("Get all Books test", () => {
     test("should isSuccess = true statusCode = 200, and type data is array", async () => {
@@ -24,12 +36,18 @@ describe("Books test", () => {
 
       expect(res.isSuccess).toBeTruthy();
       expect(res.statusCode).toEqual(200);
-      expect(Array.isArray(res.data)).toBeTruthy();
-      expect(res.data[0]).toHaveProperty("id");
-      expect(res.data[0]).toHaveProperty("code");
-      expect(res.data[0]).toHaveProperty("title");
-      expect(res.data[0]).toHaveProperty("author");
-      expect(res.data[0]).toHaveProperty("stock");
+      expect(res.data).toHaveProperty("totalTitleBooks");
+      expect(res.data).toHaveProperty("totalBooks");
+      expect(res.data).toHaveProperty("totalAvailableBooks");
+      expect(res.data).toHaveProperty("totalBorowedBooks");
+      expect(Array.isArray(res.data.books)).toBeTruthy();
+      expect(res.data.books[0]).toHaveProperty("id");
+      expect(res.data.books[0]).toHaveProperty("code");
+      expect(res.data.books[0]).toHaveProperty("title");
+      expect(res.data.books[0]).toHaveProperty("author");
+      expect(res.data.books[0]).toHaveProperty("stock");
+      expect(res.data.books[0]).toHaveProperty("borrowed");
+      expect(res.data.books[0]).toHaveProperty("available");
     });
   });
   describe("Get Books By Id test", () => {

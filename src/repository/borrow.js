@@ -10,7 +10,7 @@ class BorrowRepostiory {
     return result;
   }
 
-  async getBorrowByid(id) {
+  async getBorrowById(id) {
     const result = await this._BorrowModel.findOne({
       where: { id },
     });

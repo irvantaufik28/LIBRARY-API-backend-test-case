@@ -75,7 +75,7 @@ class BooksUseCase {
     let borrow = [];
     if (borrowDetails !== null) {
       for (let i = 0; i < borrowDetails.length; i += 1) {
-        borrow.push(await this._borrowRepository.getBorrowByid(borrowDetails[i].borrowId));
+        borrow.push(await this._borrowRepository.getBorrowById(borrowDetails[i].borrowId));
       }
       let sumbitedBorrow = await this._.filter(borrow, ['status', 'SUMBITED']);
       for (let j = 0; j < sumbitedBorrow.length; j += 1) {

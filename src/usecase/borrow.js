@@ -104,8 +104,9 @@ class BorrowUseCase {
       memberId,
     );
     const detailBorrow = await this._borrowDetailRepository.getBorrowDetailsByBorrowId(
-      newBorrow.dataValues.id,
+      newBorrow.id,
     );
+
     const dataBorrow = {
       id: newBorrow.id,
       memberId: newBorrow.memberId,
@@ -193,7 +194,7 @@ class BorrowUseCase {
       statusCode: 400,
       reason: null,
     };
-    const borrow = await this._borrowRepository.getBorrowByid(id);
+    const borrow = await this._borrowRepository.getBorrowById(id);
 
     // check whether the borrow data is available
 
@@ -256,7 +257,7 @@ class BorrowUseCase {
 
     const member = await this._memberRepository.getMemberById(borrow.memberId);
 
-    if (member.dataValues.isPenalty === true) {
+    if (member.isPenalty === true) {
       const penalty = await this._penaltyRepository.getPenaltyByMemberId(
         member.id,
       );
@@ -304,7 +305,7 @@ class BorrowUseCase {
       statusCode: 400,
       reason: null,
     };
-    const borrow = await this._borrowRepository.getBorrowByid(id);
+    const borrow = await this._borrowRepository.getBorrowById(id);
 
     // check whether the borrow data is available
 
@@ -329,7 +330,7 @@ class BorrowUseCase {
       status: this._borrowStatus.COMPLETED,
     };
     await this._borrowRepository.updateBorrow(updateBorrowValue, id);
-    const updatedBorrow = await this._borrowRepository.getBorrowByid(id);
+    const updatedBorrow = await this._borrowRepository.getBorrowById(id);
     let dayReturnedValue = Date.parse(updatedBorrow.dayReturned);
     let deadlineValue = Date.parse(updatedBorrow.deadline);
 
