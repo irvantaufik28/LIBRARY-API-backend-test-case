@@ -2,7 +2,6 @@ require("dotenv").config();
 const BooksUseCase = require("../../usecase/books");
 const mockBooks = require("../mock/books.mock");
 const mockBorrow = require('../mock/borrow.mock')
-const mockMember = require('../mock/member.mock')
 const mockBorrowDetails = require('../mock/borrowDetails.mock')
 let has = require('lodash')
 

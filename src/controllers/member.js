@@ -2,6 +2,9 @@ const resData = require('../helper/response');
 
 module.exports = {
   getAllMember: async (req, res, next) => {
+    /*
+      #swagger.tags = ['Member']
+    */
     try {
       const result = await req.memberUC.getAllMember();
 
@@ -12,6 +15,9 @@ module.exports = {
   },
 
   getMemberById: async (req, res, next) => {
+    /*
+      #swagger.tags = ['Member']
+    */
     try {
       const { id } = req.params;
 
@@ -30,6 +36,9 @@ module.exports = {
   },
 
   addMember: async (req, res, next) => {
+    /*
+      #swagger.tags = ['Member']
+    */
     try {
       const member = {
         name: req.body.name,

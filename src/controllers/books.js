@@ -2,6 +2,9 @@ const resData = require('../helper/response');
 
 module.exports = {
   getAllBooks: async (req, res, next) => {
+    /*
+      #swagger.tags = ['Books']
+    */
     try {
       const result = await req.booksUC.getAllBooks();
 
@@ -12,6 +15,9 @@ module.exports = {
   },
 
   getAllAvailableBooksAndQty: async (req, res, next) => {
+    /*
+      #swagger.tags = ['Books']
+    */
     try {
       const result = await req.booksUC.getAllAvailableBooksAndQty();
 
@@ -22,6 +28,9 @@ module.exports = {
   },
 
   getBooksById: async (req, res, next) => {
+    /*
+      #swagger.tags = ['Books']
+    */
     try {
       const { id } = req.params;
 
@@ -40,6 +49,9 @@ module.exports = {
   },
 
   addBooks: async (req, res, next) => {
+    /*
+      #swagger.tags = ['Books']
+    */
     try {
       const book = {
         title: req.body.title,
@@ -63,6 +75,9 @@ module.exports = {
   },
 
   updateBooks: async (req, res, next) => {
+    /*
+      #swagger.tags = ['Books']
+    */
     try {
       const { id } = req.params;
       const book = {
@@ -86,6 +101,9 @@ module.exports = {
     }
   },
   deleteBooks: async (req, res, next) => {
+    /*
+      #swagger.tags = ['Books']
+    */
     try {
       const { id } = req.params;
 
