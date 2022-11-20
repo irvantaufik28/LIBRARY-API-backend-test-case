@@ -41,13 +41,13 @@ class MemberUseCase {
     const borrow = await this._borrowRepository.getAllSumbitedBorrowByMemberId(id);
 
     if (borrow !== null) {
-      let newBorrowDetails = [];
+      let borrowDeta = [];
       for (let i = 0; i < borrow.length; i += 1) {
         let borrowDetails = await this._borrowDetailsRepository.getBorrowDetailsByBorrowId(borrow[i].id);
-        newBorrowDetails.push(borrowDetails[0]);
+        borrowDeta.push(borrowDetails[0]);
       }
-      let books = await this._.map(newBorrowDetails, 'qty');
-      let booksId = await this._.map(newBorrowDetails, 'booksId');
+      let books = await this._.map(borrowDeta, 'qty');
+      let booksId = await this._.map(borrowDeta, 'booksId');
       let booksDetails = [];
       for (let i = 0; i < booksId.length; i += 1) {
         let getbook = await this._booksRepositoryRepository.getBooksById(booksId[i]);
@@ -63,7 +63,7 @@ class MemberUseCase {
         totalBooks: await this._.sum(books),
         createdAt: member.createdAt,
         updatedAt: member.updatedAt,
-        borrowDetails: newBorrowDetails,
+        borrowDetails: borrowDeta,
         borrowedBook: booksDetails,
       };
 
@@ -82,7 +82,7 @@ class MemberUseCase {
       totalBooks: 0,
       createdAt: member.createdAt,
       updatedAt: member.updatedAt,
-      borrow: [],
+      borrowDetails: [],
       borrowedBook: [],
     };
 
