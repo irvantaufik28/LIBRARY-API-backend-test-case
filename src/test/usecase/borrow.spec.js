@@ -155,10 +155,41 @@ describe("Borrow Test", () => {
           // reason Name_Book + not available
           
         });
+        test("should isSuccess = false Status code = 200, Case if pending Borrow null", async () => {
+
+          mockBooksResult.getPendingBorrowByMemberId = jest.fn().mockReturnValue(null)
+          mockBooksResult.addBorrow = jest.fn().mockReturnValue({status:"PENDING"})
+
+          borrowUC = new BorrowUseCase(mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult, borrowStatus, memberStatus, has, checkAvailableBooks);
+          let res = await borrowUC.addBorrow(1, [{ id:1, qty: 1}]);
+          expect(res.isSuccess).toBeTruthy();
+          expect(res.statusCode).toEqual(200);
+          expect(res.data).toHaveProperty("id");
+          expect(res.data).toHaveProperty("memberId");
+          expect(res.data).toHaveProperty("dayOut");
+          expect(res.data).toHaveProperty("dayReturned");
+          expect(res.data).toHaveProperty("deadline");
+          expect(res.data).toHaveProperty("status");
+          expect(Array.isArray(res.data.details)).toBeTruthy();
+          // reason Name_Book + not available
+          
+        });
       });
       describe("Sumbited Borrow", () => {
+        
+        const borrowValues = 
+        {
+          id: 11,
+          memberId: 2,
+          dayOut: "2022-11-10T04:51:37.022Z",
+          dayReturned: null,
+          deadline: "2022-11-12T04:51:37.022Z",
+          status: "SUMBITED",
+          createdAt: "2022-11-10T04:51:37.022Z",
+          updatedAt: "2022-11-10T04:51:37.022Z",
+        }
         test("should isSuccess = true statusCode = 200", async () => {
-          mockBorrowDetailsResult.getAllSumbitedBorrowByMemberId = jest.fn().mockReturnValue(1)
+          mockBorrowDetailsResult.getAllSumbitedBorrowByMemberId = jest.fn().mockReturnValue(borrowValues)
           borrowUC = new BorrowUseCase(mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult, borrowStatus, memberStatus, has);
           let res = await borrowUC.sumbitedBorrow(1);
           

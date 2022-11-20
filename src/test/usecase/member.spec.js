@@ -63,6 +63,18 @@ describe("Member test", () => {
             expect(res.data).toHaveProperty("status");
             expect(res.data).toHaveProperty("email");
         })
+        test("should isSuccess = true statusCode = 200, and type data is obj Case if borrow NUll", async ()=>{
+            mockBorrowResult.getAllSumbitedBorrowByMemberId = jest.fn().mockReturnValue(null)
+            let res = await memberUC.getMemberById(1)
+
+            expect(res.isSuccess).toBeTruthy();
+            expect(res.statusCode).toEqual(200);
+            expect(res.data).toHaveProperty("id");
+            expect(res.data).toHaveProperty("code");
+            expect(res.data).toHaveProperty("name");
+            expect(res.data).toHaveProperty("status");
+            expect(res.data).toHaveProperty("email");
+        })
         test("should isSuccess = False statusCode = 404, and type data is null", async ()=>{
             mockMemberResult.getMemberById = jest.fn().mockReturnValue(null)
             memberUC = new MemberUseCase(mockMemberResult, func, memberStatus)
