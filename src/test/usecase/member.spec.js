@@ -1,5 +1,5 @@
 require("dotenv").config();
-const MemberUseCase = require('../../usecase/member2')
+const MemberUseCase = require('../../usecase/member')
 const mockBorrow = require("../mock/borrow.mock");
 const mockBorrowDetails = require("../mock/borrowDetails.mock");
 const mockBooks = require('../mock/books.mock')

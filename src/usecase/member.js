@@ -77,8 +77,8 @@ class MemberUseCase {
       let books = this._.map(allBorrowDetails, 'qty');
       let booksId = this._.map(allBorrowDetails, 'booksId');
       let booksDetails = [];
-      for (let i = 0; i < booksId.length; i += 1) {
-        let getbook = await this._booksRepositoryRepository.getBooksById(booksId[i]);
+      for (let book of booksId) {
+        let getbook = await this._booksRepositoryRepository.getBooksById(book);
         booksDetails.push(getbook);
       }
 
