@@ -31,7 +31,7 @@ const routerBorrow = require('./routes/borrow');
 
 const authUC = new AuthUseCase(new AuthRepository(), bcrypt, tokenManager);
 const memberUC = new MemberUseCase(new MemberRepository(), new BorrowRepository(), new BorrowDetailsRepository(), new BooksRepository(), func, memberStatus, has);
-const booksUC = new BooksUseCase(new BooksRepository(), has);
+const booksUC = new BooksUseCase(new BooksRepository(), new BorrowRepository(), new BorrowDetailsRepository(), new MemberRepository(), has);
 const borrowUC = new BorrowUseCase(new BorrowRepository(), new BorrowDetailsRepository(), new MemberRepository(), new BooksRepository(), new PenaltyRepository(), borrowStatus, memberStatus, has);
 
 app.use((req, res, next) => {
