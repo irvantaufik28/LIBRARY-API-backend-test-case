@@ -21,7 +21,7 @@ const BorrowDetailsRepository = require('./repository/borrowDetails');
 const PenaltyRepository = require('./repository/penalty');
 
 const AuthUseCase = require('./usecase/auth');
-const MemberUseCase = require('./usecase/member');
+const MemberUseCase = require('./usecase/member2');
 const BooksUseCase = require('./usecase/books');
 const BorrowUseCase = require('./usecase/borrow');
 
