@@ -13,9 +13,20 @@ class BooksUseCase {
     };
 
     const books = await this._booksRepository.getAllBooks(filters);
+
+    let totalTitleBooks = books.length;
+    let totalBooks = await this._.sumBy(books, 'stock');
+    let totalAvailableBooks = await this._.sumBy(books, 'available');
+    let newBooks = {
+      totalTitleBooks,
+      totalBooks,
+      totalAvailableBooks,
+      totalBorowedBooks: await this._.sumBy(books, 'borrowed'),
+      books,
+    };
     result.isSuccess = true;
     result.statusCode = 200;
-    result.data = books;
+    result.data = newBooks;
     return result;
   }
 
@@ -28,13 +39,12 @@ class BooksUseCase {
     };
 
     const books = await this._booksRepository.getAllBooks(filters);
-    const availableBooks = books.filter((e) => e.stock > 0);
-    let totalBooks = books.length;
-    let totalAvailableBooks = await this._.sumBy(availableBooks, 'stock');
+    const availableBooks = books.filter((e) => e.available !== 0);
+    let totalTitleBooks = books.length;
+    let totalAvailableTittleBooks = availableBooks.length;
     let newBooks = {
-      totalBooks,
-      totalAvailableBooks,
-      totalBorowedBooks: totalBooks - totalAvailableBooks,
+      totalTitleBooks,
+      totalAvailableTittleBooks,
       availableBooks,
     };
     result.isSuccess = true;
