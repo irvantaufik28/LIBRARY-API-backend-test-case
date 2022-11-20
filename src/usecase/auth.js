@@ -32,14 +32,17 @@ class AuthUseCase {
       username: adminResult.username,
       email: adminResult.email,
       isAdmin: adminResult.isAdmin,
+      token: null,
+      createdAt: adminResult.createdAt,
+      updatedAt: adminResult.updatedAt,
     };
-
     // getToken
     const tokenManager = await this._tokenManager.generateToken(userObj);
+    userObj.token = tokenManager;
 
     result.isSuccess = true;
     result.statusCode = 200;
-    result.token = tokenManager;
+    result.data = userObj;
 
     return result;
   }

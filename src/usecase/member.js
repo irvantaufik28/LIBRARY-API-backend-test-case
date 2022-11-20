@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 class MemberUseCase {
   constructor(memberRepository, borrowRepository, borrowDetailsRepository, booksRepository, func, memberStatus, has) {
     this._memberRepository = memberRepository;
@@ -17,10 +18,32 @@ class MemberUseCase {
       data: null,
     };
 
+    const lists = [];
     const members = await this._memberRepository.getAllMember(filters);
+
+    for (let member of members) {
+      const data = member.dataValues;
+      const borrows = await this._borrowRepository.getAllSumbitedBorrowByMemberId(data.id);
+
+      let allBorrowDetails = [];
+      for (let borrow of borrows) {
+        let borrowDetails = await this._borrowDetailsRepository.getBorrowDetailsByBorrowId(borrow.id);
+
+        for (const borrowDetail of borrowDetails) {
+          allBorrowDetails.push(borrowDetail);
+        }
+      }
+
+      let bookQtys = this._.map(allBorrowDetails, 'qty');
+
+      data.borrowedBook = this._.sum(bookQtys);
+
+      lists.push(data);
+    }
+
     result.isSuccess = true;
     result.statusCode = 200;
-    result.data = members;
+    result.data = lists;
     return result;
   }
 
@@ -41,16 +64,21 @@ class MemberUseCase {
     const borrow = await this._borrowRepository.getAllSumbitedBorrowByMemberId(id);
 
     if (borrow !== null) {
-      let borrowDetails = null;
-      for (let i = 0; i < borrow.length; i += 1) {
-        borrowDetails = await this._borrowDetailsRepository.getBorrowDetailsByBorrowId(borrow[i].id);
+      let allBorrowDetails = [];
+
+      for (let borr of borrow) {
+        let borrowDetails = await this._borrowDetailsRepository.getBorrowDetailsByBorrowId(borr.id);
+
+        for (const borrowDetail of borrowDetails) {
+          allBorrowDetails.push(borrowDetail);
+        }
       }
 
-      let books = await this._.map(borrowDetails, 'qty');
-      let booksId = await this._.map(borrowDetails, 'booksId');
+      let books = this._.map(allBorrowDetails, 'qty');
+      let booksId = this._.map(allBorrowDetails, 'booksId');
       let booksDetails = [];
-      for (let i = 0; i < booksId.length; i += 1) {
-        let getbook = await this._booksRepositoryRepository.getBooksById(booksId[i]);
+      for (let book of booksId) {
+        let getbook = await this._booksRepositoryRepository.getBooksById(book);
         booksDetails.push(getbook);
       }
 
@@ -60,10 +88,10 @@ class MemberUseCase {
         code: member.code,
         email: member.email,
         status: member.status,
-        totalBooks: await this._.sum(books),
+        totalBooks: this._.sum(books),
         createdAt: member.createdAt,
         updatedAt: member.updatedAt,
-        borrowDetails,
+        allBorrowDetails,
         borrowedBook: booksDetails,
       };
 

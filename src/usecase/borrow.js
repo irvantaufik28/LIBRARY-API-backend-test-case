@@ -273,7 +273,6 @@ class BorrowUseCase {
         result.reason = 'member cannot borrow, members get penalized';
         return result;
       }
-      await this._penaltyRepository.deletePenalty(penalty.id);
     }
 
     let dayToAdd = 7;

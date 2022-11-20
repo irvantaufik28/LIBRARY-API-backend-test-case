@@ -11,21 +11,13 @@ module.exports = {
         password: req.body.password,
       };
 
-      const responseObj = {
-        status: 'ok',
-        message: 'success',
-        token: null,
-      };
-
       const result = await req.authUC.loginAdmin(user);
 
       if (!result.isSuccess) {
         return res.status(result.statusCode).json(resData.failed(result.reason));
       }
 
-      responseObj.token = result.token;
-
-      res.status(result.statusCode).json(responseObj);
+      res.status(result.statusCode).json(resData.success(result));
     } catch (error) {
       next(error);
     }

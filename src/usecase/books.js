@@ -44,10 +44,10 @@ class BooksUseCase {
     const books = await this._booksRepository.getAllBooks(filters);
     const availableBooks = books.filter((e) => e.available !== 0);
     let totalTitleBooks = books.length;
-    let totalAvailableTittleBooks = availableBooks.length;
+    let totalAvailableTitleBooks = availableBooks.length;
     let newBooks = {
       totalTitleBooks,
-      totalAvailableTittleBooks,
+      totalAvailableTitleBooks,
       availableBooks,
     };
     result.isSuccess = true;
@@ -71,7 +71,7 @@ class BooksUseCase {
       return result;
     }
     const borrowDetails = await this._borrowDetailRepository.getBorrowDetailsByBooksId(book.id);
-    let borrowedBy = [];
+    let memberBorroweds = [];
     let borrow = [];
     if (borrowDetails !== null) {
       for (let i = 0; i < borrowDetails.length; i += 1) {
@@ -80,7 +80,7 @@ class BooksUseCase {
       let sumbitedBorrow = await this._.filter(borrow, ['status', 'SUMBITED']);
       for (let j = 0; j < sumbitedBorrow.length; j += 1) {
         let member = await this._memberRepository.getMemberById(sumbitedBorrow[j].memberId);
-        borrowedBy.push(member);
+        memberBorroweds.push(member);
       }
       let bookValue = {
         id: book.id,
@@ -90,7 +90,7 @@ class BooksUseCase {
         stock: book.stock,
         borrowed: book.borrowed,
         available: book.available,
-        borrowedBy,
+        memberBorroweds,
 
       };
 
