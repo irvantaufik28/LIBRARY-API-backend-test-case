@@ -17,8 +17,8 @@ module.exports = {
       email: {
         type: Sequelize.STRING
       },
-      status: {
-        type: Sequelize.STRING
+      isPenalty: {
+        type: Sequelize.BOOLEAN
       },
       createdAt: {
         allowNull: false,
