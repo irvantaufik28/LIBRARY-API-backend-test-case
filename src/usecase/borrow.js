@@ -343,7 +343,7 @@ class BorrowUseCase {
       await this._penaltyRepository.addPenalty(penaltyValue);
 
       const memberUpdateValue = {
-        status: this._memberStatus.PENALTY,
+        isPenalty: true,
       };
       await this._memberRepository.updateMember(
         memberUpdateValue,
