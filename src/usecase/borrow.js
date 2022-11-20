@@ -176,9 +176,9 @@ class BorrowUseCase {
         return result;
       }
       let { qty } = items[i];
-      let { stock } = book;
+      let { available } = book;
 
-      if (qty > stock) {
+      if (qty > available) {
         result.reason = `Book ${book.title} not Available`;
         return result;
       }
@@ -256,7 +256,7 @@ class BorrowUseCase {
 
     const member = await this._memberRepository.getMemberById(borrow.memberId);
 
-    if (member.dataValues.status === this._memberStatus.PENALTY) {
+    if (member.dataValues.isPenalty === true) {
       const penalty = await this._penaltyRepository.getPenaltyByMemberId(
         member.id,
       );
@@ -283,10 +283,10 @@ class BorrowUseCase {
       dayOut: new Date(),
     };
     // TODO UPDATE STOCK BOOK
-    await this.updateStock(borrow.id, statusBorrowValue.status);
+    await this.updateAvailableAndBorrowdBooks(borrow.id, statusBorrowValue.status);
     await this._borrowRepository.updateBorrow(statusBorrowValue, borrow.id);
     const statusMemberValues = {
-      status: this._memberStatus.BORROW,
+      isPenalty: false,
     };
     await this._memberRepository.updateMember(
       statusMemberValues,
@@ -343,21 +343,21 @@ class BorrowUseCase {
       await this._penaltyRepository.addPenalty(penaltyValue);
 
       const memberUpdateValue = {
-        status: this._memberStatus.PENALTY,
+        isPenalty: true,
       };
       await this._memberRepository.updateMember(
         memberUpdateValue,
         updatedBorrow.memberId,
       );
     }
-    await this.updateStock(id, this._borrowStatus.COMPLETED);
+    await this.updateAvailableAndBorrowdBooks(id, this._borrowStatus.COMPLETED);
 
     result.isSuccess = true;
     result.statusCode = 200;
     return result;
   }
 
-  async updateStock(borrowId, status) {
+  async updateAvailableAndBorrowdBooks(borrowId, status) {
     const borrow = await this._borrowDetailRepository.getBorrowDetailsByBorrowId(borrowId);
 
     for (let i = 0; i < borrow.length; i += 1) {
@@ -365,12 +365,14 @@ class BorrowUseCase {
 
       if (status === this._borrowStatus.SUMBITED) {
         const sumbitedUpdateValue = {
-          stock: book.stock - borrow[i].qty,
+          available: book.available - borrow[i].qty,
+          borrowed: book.borrowed + borrow[i].qty,
         };
         await this._booksRepository.updateBooks(sumbitedUpdateValue, book.id);
       } else if (status === this._borrowStatus.COMPLETED) {
         const completedUpdateValue = {
-          stock: book.stock + borrow[i].qty,
+          available: book.available + borrow[i].qty,
+          borrowed: book.borrowed - borrow[i].qty,
         };
         await this._booksRepository.updateBooks(completedUpdateValue, book.id);
       }

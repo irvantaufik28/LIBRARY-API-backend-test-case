@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     code: DataTypes.STRING,
     email: DataTypes.STRING,
-    status: DataTypes.STRING
+    isPenalty: DataTypes.BOOLEAN,
   }, {
     sequelize,
     modelName: 'Member',

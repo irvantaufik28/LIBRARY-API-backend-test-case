@@ -1,6 +1,9 @@
 class BooksUseCase {
-  constructor(booksRepository, has) {
+  constructor(booksRepository, borrowRepository, borrowDetailRepository, memberRepository, has) {
     this._booksRepository = booksRepository;
+    this._borrowRepository = borrowRepository;
+    this._borrowDetailRepository = borrowDetailRepository;
+    this._memberRepository = memberRepository;
     this._ = has;
   }
 
@@ -13,9 +16,20 @@ class BooksUseCase {
     };
 
     const books = await this._booksRepository.getAllBooks(filters);
+
+    let totalTitleBooks = books.length;
+    let totalBooks = await this._.sumBy(books, 'stock');
+    let totalAvailableBooks = await this._.sumBy(books, 'available');
+    let newBooks = {
+      totalTitleBooks,
+      totalBooks,
+      totalAvailableBooks,
+      totalBorowedBooks: await this._.sumBy(books, 'borrowed'),
+      books,
+    };
     result.isSuccess = true;
     result.statusCode = 200;
-    result.data = books;
+    result.data = newBooks;
     return result;
   }
 
@@ -28,13 +42,12 @@ class BooksUseCase {
     };
 
     const books = await this._booksRepository.getAllBooks(filters);
-    const availableBooks = books.filter((e) => e.stock > 0);
-    let totalBooks = books.length;
-    let totalAvailableBooks = await this._.sumBy(availableBooks, 'stock');
+    const availableBooks = books.filter((e) => e.available !== 0);
+    let totalTitleBooks = books.length;
+    let totalAvailableTittleBooks = availableBooks.length;
     let newBooks = {
-      totalBooks,
-      totalAvailableBooks,
-      totalBorowedBooks: totalBooks - totalAvailableBooks,
+      totalTitleBooks,
+      totalAvailableTittleBooks,
       availableBooks,
     };
     result.isSuccess = true;
@@ -57,11 +70,35 @@ class BooksUseCase {
       result.reason = 'book not found!';
       return result;
     }
+    const borrowDetails = await this._borrowDetailRepository.getBorrowDetailsByBooksId(book.id);
+    let borrowedBy = [];
+    let borrow = [];
+    if (borrowDetails !== null) {
+      for (let i = 0; i < borrowDetails.length; i += 1) {
+        borrow.push(await this._borrowRepository.getBorrowByid(borrowDetails[i].borrowId));
+      }
+      let sumbitedBorrow = await this._.filter(borrow, ['status', 'SUMBITED']);
+      for (let j = 0; j < sumbitedBorrow.length; j += 1) {
+        let member = await this._memberRepository.getMemberById(sumbitedBorrow[j].memberId);
+        borrowedBy.push(member);
+      }
+      let bookValue = {
+        id: book.id,
+        code: book.code,
+        title: book.title,
+        author: book.author,
+        stock: book.stock,
+        borrowed: book.borrowed,
+        available: book.available,
+        borrowedBy,
 
-    result.isSuccess = true;
-    result.statusCode = 200;
-    result.data = book;
-    return result;
+      };
+
+      result.isSuccess = true;
+      result.statusCode = 200;
+      result.data = bookValue;
+      return result;
+    }
   }
 
   async addBooks(books) {
@@ -71,6 +108,8 @@ class BooksUseCase {
       reason: null,
       data: null,
     };
+    books.available = books.stock;
+    books.borrowed = 0;
     const newbooks = await this._booksRepository.addBooks(books);
 
     result.isSuccess = true;

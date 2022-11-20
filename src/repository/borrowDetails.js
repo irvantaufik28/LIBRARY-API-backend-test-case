@@ -19,6 +19,15 @@ class BorrowDetailsRepository {
     return result;
   }
 
+  async getBorrowDetailsByBooksId(booksId) {
+    const result = await this._borrowDetails.findAll({
+      where: {
+        booksId,
+      },
+    });
+    return result;
+  }
+
   async deleteBorrowDetails(id) {
     const result = await this._borrowDetails.destroy({
       where: {

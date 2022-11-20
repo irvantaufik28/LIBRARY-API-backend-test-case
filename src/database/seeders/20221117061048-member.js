@@ -7,7 +7,7 @@ module.exports = {
         code: "M001",
         name: "Angga",
         email : "angga@mail.com",
-        status : "NOT BORROWING",
+        isPenalty : false,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -15,14 +15,14 @@ module.exports = {
         code: "M002",
         name: "Ferry",
         email: "ferry@mail.com",
-        status: "BORROW",
+        isPenalty : false,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
         code: "M003",
         name: "Putri",
-        status: "PENALTY",
+        isPenalty : false,
         email: "putri@mail.com",
         createdAt: new Date(),
         updatedAt: new Date()
