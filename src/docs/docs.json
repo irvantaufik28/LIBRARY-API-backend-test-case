@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PERPUSTAKAAN",
-    "description": "API ecommerce App for project platinum for customer, create by irvan taufik",
+    "description": "API PERPUSTAKAAN, create by Irvan taufik",
     "termsOfService": "http://swagger.io/terms/",
     "contact": {
       "email": "irvantaufik28@gmail.com"
@@ -70,6 +70,7 @@
         ],
         "description": "",
         "parameters": [
+         
         ],
         "responses": {
           "401": {
@@ -98,6 +99,7 @@
               "type": "string"
             }
           }
+         
         ],
         "responses": {
           "401": {
@@ -118,7 +120,13 @@
         ],
         "description": "",
         "parameters": [
-         
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "401": {
@@ -137,13 +145,13 @@
                 "type": "object",
                 "properties": {
                   "title": {
-                    "example": "Bangkit Lagi"
+                    "example": "BUKU API"
                   },
                   "code": {
-                    "example": "BL1"
+                    "example": "M123"
                   },
                   "author": {
-                    "example": "Irvan"
+                    "example": "irvan"
                   },
                   "stock": {
                     "example": "3"
@@ -188,13 +196,13 @@
                 "type": "object",
                 "properties": {
                   "title": {
-                    "example": "Bangkit Lagi 2"
+                    "example": "BUKU API"
                   },
                   "code": {
-                    "example": "BL1"
+                    "example": "M123"
                   },
                   "author": {
-                    "example": "irvan"
+                    "example": "irvan taufik"
                   },
                   "stock": {
                     "example": "3"
@@ -241,6 +249,7 @@
         ],
         "description": "",
         "parameters": [
+         
         ],
         "responses": {
           "401": {
@@ -408,6 +417,62 @@
         ]
       }
     },
+    "/api/borrow/cancel/{id}": {
+      "patch": {
+        "tags": [
+          "Borrow"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/borrow/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Borrow"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/member": {
       "get": {
         "tags": [
@@ -415,7 +480,7 @@
         ],
         "description": "",
         "parameters": [
-        
+         
         ],
         "responses": {
           "401": {
