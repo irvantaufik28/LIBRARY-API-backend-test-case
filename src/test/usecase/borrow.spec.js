@@ -5,11 +5,12 @@ const mockBorrowDetails = require("../mock/borrowDetails.mock");
 const mockBooks = require('../mock/books.mock')
 const mockMember = require("../mock/member.mock");
 const mockPenalty = require('../mock/penalty.mock')
+const mockEmail = require('../mock/email.mock')
 const borrowStatus = require('../../internal/constant/borrowStatus')
 const memberStatus = require('../../internal/constant/memberStatus')
 const has = require('lodash')
 
-let mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult = {};
+let mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult, mockEmailResult = {};
 let borrowUC = null;
 
 describe("Borrow Test", () => {
@@ -48,13 +49,16 @@ describe("Borrow Test", () => {
       deletePenalty: jest.fn().mockReturnValue(true),
       addPenalty: jest.fn().mockReturnValue(mockPenalty.penalty),
     };
-
+    
     checkAvailableBooks = {
       checkAvailableBooks: jest.fn().mockReturnValue(true),
-        };
-
+    };
+    mockEmailResult = {
+      sendNotificationPenalty: jest.fn().mockReturnValue(mockEmail),
+    }; 
+    
     mockMember;
-    borrowUC = new BorrowUseCase(mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult, borrowStatus, memberStatus, has, checkAvailableBooks);
+    borrowUC = new BorrowUseCase(mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult,mockEmailResult, borrowStatus, memberStatus, has, checkAvailableBooks);
   });
   describe("getAllBorrow", () => {
     test("should isSuccess = true statusCode = 200, and type data is arrya", async () => {
@@ -110,7 +114,7 @@ describe("Borrow Test", () => {
        
 
         test("should isSuccess = TRUE Status code = 201", async () => {
-          borrowUC = new BorrowUseCase(mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult, borrowStatus, memberStatus, has, checkAvailableBooks);
+          borrowUC = new BorrowUseCase(mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult, mockEmailResult, borrowStatus, memberStatus, has, checkAvailableBooks);
           let res = await borrowUC.addBorrow(1, [{ id:1, qty: 1}]);
           expect(res.isSuccess).toBeTruthy();
           expect(res.statusCode).toEqual(200);
@@ -124,7 +128,7 @@ describe("Borrow Test", () => {
         });
         test("should isSuccess = false Status code = 400, message Members may not borrow more than 2 books", async () => {
 
-          borrowUC = new BorrowUseCase(mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult, borrowStatus, memberStatus, has, checkAvailableBooks);
+          borrowUC = new BorrowUseCase(mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult, mockEmailResult, borrowStatus, memberStatus, has, checkAvailableBooks);
           let res = await borrowUC.addBorrow(1, [{ id:1, qty: 3}]);
           expect(res.isSuccess).toBeFalsy();
           expect(res.statusCode).toEqual(400);
@@ -147,7 +151,7 @@ describe("Borrow Test", () => {
 
           mockBooksResult.getBooksById = jest.fn().mockReturnValue(books)
 
-          borrowUC = new BorrowUseCase(mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult, borrowStatus, memberStatus, has, checkAvailableBooks);
+          borrowUC = new BorrowUseCase(mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult, mockEmailResult, borrowStatus, memberStatus, has, checkAvailableBooks);
           let res = await borrowUC.addBorrow(1, [{ id:1, qty: 1}]);
           expect(res.isSuccess).toBeFalsy();
           expect(res.statusCode).toEqual(400);
@@ -160,7 +164,7 @@ describe("Borrow Test", () => {
           mockBooksResult.getPendingBorrowByMemberId = jest.fn().mockReturnValue(null)
           mockBooksResult.addBorrow = jest.fn().mockReturnValue({status:"PENDING"})
 
-          borrowUC = new BorrowUseCase(mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult, borrowStatus, memberStatus, has, checkAvailableBooks);
+          borrowUC = new BorrowUseCase(mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult, mockEmailResult, borrowStatus, memberStatus, has, checkAvailableBooks);
           let res = await borrowUC.addBorrow(1, [{ id:1, qty: 1}]);
           expect(res.isSuccess).toBeTruthy();
           expect(res.statusCode).toEqual(200);
@@ -190,7 +194,7 @@ describe("Borrow Test", () => {
         }
         test("should isSuccess = true statusCode = 200", async () => {
           mockBorrowDetailsResult.getAllSumbitedBorrowByMemberId = jest.fn().mockReturnValue(borrowValues)
-          borrowUC = new BorrowUseCase(mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult, borrowStatus, memberStatus, has);
+          borrowUC = new BorrowUseCase(mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult, mockEmailResult, borrowStatus, memberStatus, has);
           let res = await borrowUC.sumbitedBorrow(1);
           
           expect(res.isSuccess).toBeTruthy();
@@ -278,7 +282,7 @@ describe("Borrow Test", () => {
         }
 
           mockMemberResult.getMemberById = jest.fn().mockReturnValue(memberPenalty)
-          borrowUC = new BorrowUseCase(mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult, borrowStatus, memberStatus, has);
+          borrowUC = new BorrowUseCase(mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult, mockEmailResult, borrowStatus, memberStatus, has);
           let res = await borrowUC.sumbitedBorrow(1);
           
           expect(res.isSuccess).toBeTruthy();
@@ -328,7 +332,7 @@ describe("Borrow Test", () => {
                 updatedAt: "2022-11-10T04:51:37.022Z",
             }
           mockBorrowResult.getBorrowById = jest.fn().mockReturnValue(borrowValues)
-          borrowUC = new BorrowUseCase(mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult, borrowStatus, memberStatus, has);
+          borrowUC = new BorrowUseCase(mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult, mockEmailResult, borrowStatus, memberStatus, has);
           let res = await borrowUC.returnedBorrow(borrowValues.id);
           
           expect(res.isSuccess).toBeTruthy();
@@ -408,7 +412,7 @@ describe("Borrow Test", () => {
         }
 
           mockMemberResult.getMemberById = jest.fn().mockReturnValue(memberPenalty)
-          borrowUC = new BorrowUseCase(mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult, borrowStatus, memberStatus, has);
+          borrowUC = new BorrowUseCase(mockBorrowResult, mockBorrowDetailsResult, mockMemberResult, mockBooksResult, mockPenaltyResult, mockEmailResult, borrowStatus, memberStatus, has);
           let res = await borrowUC.sumbitedBorrow(1);
           
           expect(res.isSuccess).toBeTruthy();
