@@ -1,4 +1,4 @@
-const { BooksPayloadSchema } = require('../books/schema');
+const { BooksPayloadSchema } = require('./schema');
 const resData = require('../../../helper/response');
 
 const BooksValidator = {
