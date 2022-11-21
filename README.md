@@ -5,7 +5,7 @@
 
 Installation project - manual
 
-- clone project `git clone https://github.com/bimaagung/maju-jaya-platinum-kelompok-1-BEJ.git`
+- clone project `git clone https://github.com/irvantaufik28/backend-test-case.git`
 - add node modules `npm install`
 - rename file .env.example to .env
 - configuration db in file .env
