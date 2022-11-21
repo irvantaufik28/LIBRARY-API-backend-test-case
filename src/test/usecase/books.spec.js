@@ -56,7 +56,7 @@ describe("Books test", () => {
       expect(res.isSuccess).toBeTruthy();
       expect(res.statusCode).toEqual(200);
       expect(res.data).toHaveProperty("totalTitleBooks");
-      expect(res.data).toHaveProperty("totalAvailableTittleBooks");
+      expect(res.data).toHaveProperty("totalAvailableTitleBooks");
       
       expect(Array.isArray(res.data.availableBooks)).toBeTruthy();
       expect(res.data.availableBooks[0]).toHaveProperty("id");
