@@ -5,6 +5,7 @@ class BorrowUseCase {
     memberRepository,
     booksRepository,
     penaltyRepository,
+    emailRepository,
     borrowStatus,
     memberStatus,
     has,
@@ -14,6 +15,7 @@ class BorrowUseCase {
     this._memberRepository = memberRepository;
     this._booksRepository = booksRepository;
     this._penaltyRepository = penaltyRepository;
+    this._emailRepository = emailRepository;
     this._borrowStatus = borrowStatus;
     this._memberStatus = memberStatus;
     this._ = has;
@@ -348,6 +350,12 @@ class BorrowUseCase {
         expiredAt: new Date(currentDate.getTime() + dayToAdd * 86400000),
       };
       await this._penaltyRepository.addPenalty(penaltyValue);
+
+      const memberData = await this._memberRepository.getMemberById(updatedBorrow.memberId);
+
+      // send email notif for penalty
+
+      await this._emailRepository.sendNotificationPenalty(memberData.email, memberData);
 
       const memberUpdateValue = {
         isPenalty: true,
