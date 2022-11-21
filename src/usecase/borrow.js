@@ -76,6 +76,11 @@ class BorrowUseCase {
       data: null,
     };
 
+    if (memberId === undefined) {
+      result.reason = 'please insert member';
+      return result;
+    }
+
     const member = await this._memberRepository.getMemberById(memberId);
     if (member === null) {
       result.reason = 'member not found!';
