@@ -120,23 +120,66 @@ class BooksUseCase {
 
   async updateBooks(book, id) {
     let result = {
-      isSuccess: false,
-      statusCode: 404,
+      isSuccess: true,
+      statusCode: 200,
       reason: null,
       data: null,
     };
     const verifyBook = await this._booksRepository.getBooksById(id);
     if (verifyBook === null) {
       result.isSuccess = false;
+      result.statusCode = 404;
       result.reason = 'book not found!';
       return result;
     }
-    const newbooks = await this._booksRepository.updateBooks(book, id);
+    // console.log( book.stock - verifyBook.available)
+    // console.log( verifyBook.available)
+    // console.log( book.stock )
+    // return
 
-    result.isSuccess = true;
-    result.statusCode = 200;
-    result.data = newbooks;
-    return result;
+    if (book.stock < verifyBook.borrowed) {
+      result.isSuccess = false;
+      result.statusCode = 400;
+      result.reason = 'cannot update stock, borrowed cannot be greater than stock !';
+      return result;
+    }
+    if (book.stock === verifyBook.stock) {
+      const bookUpdateValue = {
+        id: book.id,
+        title: book.title,
+        author: book.author,
+      };
+      await this._booksRepository.updateBooks(bookUpdateValue, id);
+      return result;
+    }
+    if (book.stock > verifyBook.stock || book.stock < verifyBook.stock) {
+      const bookUpdateValue = {
+        id: book.id,
+        title: book.title,
+        author: book.author,
+        stock: book.stock,
+        available: book.stock - verifyBook.borrowed,
+      };
+      await this._booksRepository.updateBooks(bookUpdateValue, id);
+      return result;
+    }
+    // if (book.stock < verifyBook.stock) {
+    //   const bookUpdateValue = {
+    //     id: book.id,
+    //     title: book.title,
+    //     author: book.author,
+    //     stock: book.stock,
+    //     available: book.stock - verifyBook.borrowed,
+    //   };
+    //   await this._booksRepository.updateBooks(bookUpdateValue, id);
+    //   return result;
+    // }
+
+    // await this._booksRepository.updateBooks(book, id);
+
+    // result.isSuccess = true;
+    // result.statusCode = 200;
+    // return result;
   }
 
   async deleteBooks(id) {
@@ -160,4 +203,5 @@ class BooksUseCase {
     return result;
   }
 }
+
 module.exports = BooksUseCase;
