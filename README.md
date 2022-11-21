@@ -16,7 +16,7 @@ Installation project - manual
 
 test each endpoint in swagger
 
-- enter swagger for customer : `localhost:3000/docs` 
+- enter swagger : `localhost:3000/docs` 
 - login and get token  
 - add token in authorization (in accordance auth)
 - testing all endpoint
