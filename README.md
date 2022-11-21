@@ -1,4 +1,5 @@
 ### Model Aplikasi PERPUSTAKAAN
+![ERD Perpustakaan](https://user-images.githubusercontent.com/107734134/202962923-bb7289f8-36dd-410e-88c6-851d425e0e8d.png)
 
 
 ### Installation
