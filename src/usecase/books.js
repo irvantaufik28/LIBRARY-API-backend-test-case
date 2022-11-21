@@ -132,10 +132,6 @@ class BooksUseCase {
       result.reason = 'book not found!';
       return result;
     }
-    // console.log( book.stock - verifyBook.available)
-    // console.log( verifyBook.available)
-    // console.log( book.stock )
-    // return
 
     if (book.stock < verifyBook.borrowed) {
       result.isSuccess = false;
@@ -163,23 +159,6 @@ class BooksUseCase {
       await this._booksRepository.updateBooks(bookUpdateValue, id);
       return result;
     }
-    // if (book.stock < verifyBook.stock) {
-    //   const bookUpdateValue = {
-    //     id: book.id,
-    //     title: book.title,
-    //     author: book.author,
-    //     stock: book.stock,
-    //     available: book.stock - verifyBook.borrowed,
-    //   };
-    //   await this._booksRepository.updateBooks(bookUpdateValue, id);
-    //   return result;
-    // }
-
-    // await this._booksRepository.updateBooks(book, id);
-
-    // result.isSuccess = true;
-    // result.statusCode = 200;
-    // return result;
   }
 
   async deleteBooks(id) {
