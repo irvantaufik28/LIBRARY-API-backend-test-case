@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PERPUSTAKAAN",
-    "description": "API ecommerce App for project platinum for customer, create by Maju Jaya",
+    "description": "API ecommerce App for project platinum for customer, create by irvan taufik",
     "termsOfService": "http://swagger.io/terms/",
     "contact": {
       "email": "irvantaufik28@gmail.com"
@@ -70,7 +70,6 @@
         ],
         "description": "",
         "parameters": [
-          
         ],
         "responses": {
           "401": {
@@ -119,7 +118,7 @@
         ],
         "description": "",
         "parameters": [
-
+         
         ],
         "responses": {
           "401": {
@@ -138,13 +137,13 @@
                 "type": "object",
                 "properties": {
                   "title": {
-                    "example": "A TIME TO KILL BY JOHN GRISHAM"
+                    "example": "Bangkit Lagi"
                   },
                   "code": {
-                    "example": "TTK"
+                    "example": "BL1"
                   },
                   "author": {
-                    "example": "JHON"
+                    "example": "Irvan"
                   },
                   "stock": {
                     "example": "3"
@@ -189,13 +188,13 @@
                 "type": "object",
                 "properties": {
                   "title": {
-                    "example": "A TIME TO KILL BY JOHN GRISHAM"
+                    "example": "Bangkit Lagi 2"
                   },
                   "code": {
-                    "example": "TUK"
+                    "example": "BL1"
                   },
                   "author": {
-                    "example": "JHON"
+                    "example": "irvan"
                   },
                   "stock": {
                     "example": "3"
@@ -242,7 +241,6 @@
         ],
         "description": "",
         "parameters": [
-         
         ],
         "responses": {
           "401": {
@@ -256,7 +254,7 @@
         ]
       }
     },
-    "/api/{borrowid}": {
+    "/api/borrow/{id}": {
       "get": {
         "tags": [
           "Borrow"
@@ -264,7 +262,7 @@
         "description": "",
         "parameters": [
           {
-            "name": "borrowid",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -319,7 +317,6 @@
         ],
         "description": "",
         "parameters": [
-         
           {
             "name": "memberId",
             "in": "query",
@@ -339,8 +336,14 @@
           }
         ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/bodyAddBorrow"
+              }
+            },
+            "application/xml": {
               "schema": {
                 "$ref": "#/components/schemas/bodyAddBorrow"
               }
@@ -405,6 +408,52 @@
         ]
       }
     },
+    "/api/borrow/cancel/{id}": {
+      "patch": {
+        "tags": [
+          "Borrow"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/borrow/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Borrow"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/api/member": {
       "get": {
         "tags": [
@@ -412,7 +461,7 @@
         ],
         "description": "",
         "parameters": [
-
+        
         ],
         "responses": {
           "401": {
@@ -461,7 +510,7 @@
         ],
         "description": "",
         "parameters": [
-          
+         
         ],
         "responses": {
           "401": {
@@ -480,10 +529,10 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "example": "irvan "
+                    "example": "any"
                   },
                   "email": {
-                    "example": "irvantaufik28@gmail.com"
+                    "example": "any"
                   }
                 }
               }
@@ -495,159 +544,28 @@
   },
   "components": {
     "schemas": {
-      "successGetAllBooks": {
+      "bodyAddBorrow": {
         "type": "object",
         "properties": {
-          "status": {
-            "type": "string",
-            "example": "ok"
-          },
-          "message": {
-            "type": "string",
-            "example": "success"
-          },
-          "data": {
-            "type": "object",
-            "properties": {
-              "totalTitleBooks": {
-                "type": "number",
-                "example": 5
-              },
-              "totalBooks": {
-                "type": "number",
-                "example": 10
-              },
-              "totalAvailableBooks": {
-                "type": "number",
-                "example": 10
-              },
-              "totalBorowedBooks": {
-                "type": "number",
-                "example": 0
-              },
-              "books": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "number",
-                      "example": 1
-                    },
-                    "title": {
-                      "type": "string",
-                      "example": "Harry Potter"
-                    },
-                    "code": {
-                      "type": "string",
-                      "example": "JK-45"
-                    },
-                    "author": {
-                      "type": "string",
-                      "example": "J.K Rowling"
-                    },
-                    "stock": {
-                      "type": "number",
-                      "example": 2
-                    },
-                    "borrowed": {
-                      "type": "number",
-                      "example": 0
-                    },
-                    "available": {
-                      "type": "number",
-                      "example": 2
-                    },
-                    "createdAt": {
-                      "type": "string",
-                      "example": "2022-11-20T13:40:14.833Z"
-                    },
-                    "updatedAt": {
-                      "type": "string",
-                      "example": "2022-11-20T13:40:14.833Z"
-                    }
-                  }
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "example": 1
+                },
+                "qty": {
+                  "type": "number",
+                  "example": 1
                 }
               }
             }
           }
-        }
-      },
-      "successGetBooksById": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "example": "ok"
-          },
-          "message": {
-            "type": "string",
-            "example": "success"
-          },
-          "data": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "number",
-                "example": 3
-              },
-              "code": {
-                "type": "string",
-                "example": "TW-11"
-              },
-              "title": {
-                "type": "string",
-                "example": "Twilight"
-              },
-              "author": {
-                "type": "string",
-                "example": "Stephenie Meyer"
-              },
-              "stock": {
-                "type": "number",
-                "example": 2
-              },
-              "borrowed": {
-                "type": "number",
-                "example": 0
-              },
-              "available": {
-                "type": "number",
-                "example": 2
-              },
-              "borrowedBy": {
-                "type": "array",
-                "example": [],
-                "items": {}
-              }
-            }
-          }
-        }
-      },
-      "notAvailable": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "example": "failed"
-          },
-          "message": {
-            "type": "string",
-            "example": "username or email not aviable"
-          }
-        }
-      },
-      "passwordNotMatch": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "example": "failed"
-          },
-          "message": {
-            "type": "string",
-            "example": "password and confrim password not match"
-          }
+        },
+        "xml": {
+          "name": "bodyAddBorrow"
         }
       }
     },

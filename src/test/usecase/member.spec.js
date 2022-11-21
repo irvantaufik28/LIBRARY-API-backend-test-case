@@ -37,6 +37,7 @@ describe("Member test", () => {
         memberUC = new MemberUseCase(mockMemberResult, mockBorrowResult, mockBorrowDetailsResult, mockBooksResult, func, memberStatus, has)
     })
     describe('Get all member test', () => {
+
         test("should isSuccess = true statusCode = 200, and type data is array", async () => {
             let res = await memberUC.getAllMember();
 

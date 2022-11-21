@@ -74,6 +74,13 @@ class BorrowUseCase {
       data: null,
     };
 
+    const member = await this._memberRepository.getMemberById(memberId);
+    if (member === null) {
+      result.reason = 'member not found!';
+      result.statusCode = 404;
+      return result;
+    }
+
     // Check if members borrow more than 2 books
     const verifyQty = await this._.map(items, 'qty');
     const qty = this._.sum(verifyQty);
@@ -351,6 +358,75 @@ class BorrowUseCase {
       );
     }
     await this.updateAvailableAndBorrowdBooks(id, this._borrowStatus.COMPLETED);
+
+    result.isSuccess = true;
+    result.statusCode = 200;
+    return result;
+  }
+
+  async canceledBorrow(id) {
+    let result = {
+      isSuccess: false,
+      statusCode: 400,
+      reason: null,
+    };
+    const borrow = await this._borrowRepository.getBorrowById(id);
+
+    // check whether the borrow data is available
+
+    if (borrow === null) {
+      result.statusCode = 404;
+      result.reason = 'borrow not found!';
+      return result;
+    }
+
+    // check the data array of objects whether there are objects with PENDING status. if not there then error message & Update status borrow to CANCELED.
+
+    const statusValues = ['COMPLETED', 'CANCELED', 'SUMBITED'];
+    for (let i = 0; i < statusValues.length; i += 1) {
+      if (borrow.status === statusValues[i]) {
+        result.reason = `cannot CANCELED, status borrow is ${statusValues[i]}`;
+        return result;
+      }
+    }
+
+    const updateBorrowValue = {
+      status: this._borrowStatus.CANCELED,
+    };
+    await this._borrowRepository.updateBorrow(updateBorrowValue, id);
+
+    result.isSuccess = true;
+    result.statusCode = 200;
+    return result;
+  }
+
+  async deleteBorrow(id) {
+    let result = {
+      isSuccess: false,
+      statusCode: 400,
+      reason: null,
+    };
+    const borrow = await this._borrowRepository.getBorrowById(id);
+
+    // check whether the borrow data is available
+
+    if (borrow === null) {
+      result.statusCode = 404;
+      result.reason = 'borrow not found!';
+      return result;
+    }
+
+    // check the data array of objects whether there are objects with PENDING status. if not there then error message & Update status borrow to CANCELED.
+
+    const statusValues = ['SUMBITED', 'COMPLETED'];
+    for (let i = 0; i < statusValues.length; i += 1) {
+      if (borrow.status === statusValues[i]) {
+        result.reason = `cannot Delete Borrow, status borrow is ${statusValues[i]}`;
+        return result;
+      }
+    }
+
+    await this._borrowRepository.deleteBorrow(id);
 
     result.isSuccess = true;
     result.statusCode = 200;
