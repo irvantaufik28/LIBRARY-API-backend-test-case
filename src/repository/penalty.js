@@ -9,7 +9,6 @@ class PenaltyRepository {
     const result = await this._PenaltyModel.findOne({
       where: {
         id,
-        isActive: true,
       },
     });
     return result;
@@ -19,6 +18,7 @@ class PenaltyRepository {
     const result = await this._PenaltyModel.findOne({
       where: {
         memberId,
+        isActive: true,
       },
     });
     return result;
