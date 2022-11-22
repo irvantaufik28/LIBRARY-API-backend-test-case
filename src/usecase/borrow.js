@@ -293,17 +293,19 @@ class BorrowUseCase {
     // TODO UPDATE STOCK BOOK
     await this.updateAvailableAndBorrowdBooks(borrow.id, statusBorrowValue.status);
     await this._borrowRepository.updateBorrow(statusBorrowValue, borrow.id);
-    const updatePenaltyValues = {
-      isActive: false,
-    };
-    await this._penaltyRepository.updatePenalty(updatePenaltyValues, penalty.id);
-    const statusMemberValues = {
-      isPenalty: false,
-    };
-    await this._memberRepository.updateMember(
-      statusMemberValues,
-      borrow.memberId,
-    );
+    if (penalty !== null) {
+      const updatePenaltyValues = {
+        isActive: false,
+      };
+      await this._penaltyRepository.updatePenalty(updatePenaltyValues, penalty.id);
+      const statusMemberValues = {
+        isPenalty: false,
+      };
+      await this._memberRepository.updateMember(
+        statusMemberValues,
+        borrow.memberId,
+      );
+    }
 
     result.isSuccess = true;
     result.statusCode = 200;
