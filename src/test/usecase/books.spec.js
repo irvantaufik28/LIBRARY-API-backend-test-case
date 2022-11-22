@@ -147,7 +147,30 @@ describe("Books test", () => {
       expect(res.statusCode).toEqual(404);
       expect(res.reason).toEqual("book not found!");
     });
+
+    test("should isSuccess = False statusCode = 400, and type data is null, cannot update stock, borrowed cannot be greater than stock", async () => {
+
+
+      booksUC = ooksUC = new BooksUseCase(mockBooksResult, mockBorrowResult,mockBorrowDetailsResult, mockMemberResult, has);
+      let res = await booksUC.updateBooks({stock: 0});
+
+      expect(res.isSuccess).toBeFalsy();
+      expect(res.statusCode).toEqual(400);
+      expect(res.reason).toEqual("cannot update stock, borrowed cannot be greater than stock !");
+    });
+    test("should isSuccess = true statusCode = 200, input stock book === stock on database", async () => {
+  
+  
+      booksUC = ooksUC = new BooksUseCase(mockBooksResult, mockBorrowResult,mockBorrowDetailsResult, mockMemberResult, has);
+      let res = await booksUC.updateBooks({stock: 2});
+  
+      expect(res.isSuccess).toBeTruthy();
+      expect(res.statusCode).toEqual(200);
+    });
   });
+
+
+
   describe("DELETE Books test", () => {
     test("should isSuccess = true statusCode = 200, and type data is obj", async () => {
       let res = await booksUC.deleteBooks(1);

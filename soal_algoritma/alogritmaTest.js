@@ -48,7 +48,7 @@ console.log(findDuplicate(input, query))
 
 
 //4 . Silahkan cari hasil dari pengurangan dari jumlah diagonal sebuah matrik NxN Contoh:
-let maxtrix = [[1, 2, 0], [4, 5, 6], [7, 8, 9]]
+let maxtrix = [[1, 2, 0,3], [4, 5, 6,7], [7, 8, 9,2],[3,7,8,9]]
 // diagonal pertama = 1 + 5 + 9 = 15 
 // diagonal kedua = 0 + 5 + 7 = 12 
 
