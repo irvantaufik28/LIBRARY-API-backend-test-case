@@ -47,6 +47,7 @@ describe("Borrow Test", () => {
     mockPenaltyResult = {
       getPenaltyByMemberId: jest.fn().mockReturnValue(mockPenalty.penalty),
       deletePenalty: jest.fn().mockReturnValue(true),
+      updatePenalty: jest.fn().mockReturnValue(true),
       addPenalty: jest.fn().mockReturnValue(mockPenalty.penalty),
     };
 
