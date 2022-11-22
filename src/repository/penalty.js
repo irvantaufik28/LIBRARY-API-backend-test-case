@@ -14,6 +14,16 @@ class PenaltyRepository {
     return result;
   }
 
+  async getAllPenaltyByMemberId(memberId) {
+    const result = await this._PenaltyModel.findAll({
+      where: {
+        memberId,
+        isActive: true,
+      },
+    });
+    return result;
+  }
+
   async getPenaltyByMemberId(memberId) {
     const result = await this._PenaltyModel.findOne({
       where: {

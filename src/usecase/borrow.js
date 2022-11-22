@@ -266,21 +266,38 @@ class BorrowUseCase {
     //   check if member status PENALTY
 
     const member = await this._memberRepository.getMemberById(borrow.memberId);
-    const penalty = await this._penaltyRepository.getPenaltyByMemberId(
+    const penalty = await this._penaltyRepository.getAllPenaltyByMemberId(
       member.id,
     );
-    if (member.isPenalty === true) {
-      let expriedPenalty = Date.parse(penalty.expiredAt);
-      let currentDate = Date.parse(new Date());
-      //  check expried penalty
-      if (expriedPenalty > currentDate) {
-        const borrowStatusValue = {
-          status: this._memberStatus.CANCELED,
-        };
-        await this._borrowRepository.updateBorrow(borrowStatusValue, borrow.id);
-        result.reason = 'member cannot borrow, members get penalized';
-        return result;
+
+    if (penalty !== null) {
+      for (let i = 0; i < penalty.length; i += 1) {
+        //  check expried penalty
+        if (Date.parse(penalty[i].expiredAt) < Date.parse(new Date())) {
+          const updatePenaltyValues = {
+            isActive: false,
+          };
+          await this._penaltyRepository.updatePenalty(updatePenaltyValues, penalty[i].id);
+        }
       }
+    }
+
+    const verifyPenaltyActive = await this._penaltyRepository.getAllPenaltyByMemberId(member.id);
+    if (verifyPenaltyActive.length === 0) {
+      const statusMemberValues = {
+        isPenalty: false,
+      };
+      await this._memberRepository.updateMember(
+        statusMemberValues,
+        borrow.memberId,
+      );
+    } else {
+      const borrowStatusValue = {
+        status: this._memberStatus.CANCELED,
+      };
+      await this._borrowRepository.updateBorrow(borrowStatusValue, borrow.id);
+      result.reason = 'member cannot borrow, members get penalized';
+      return result;
     }
 
     let dayToAdd = 7;
@@ -290,22 +307,9 @@ class BorrowUseCase {
       deadline: new Date(currentDate.getTime() + dayToAdd * 86400000),
       dayOut: new Date(),
     };
-    // TODO UPDATE STOCK BOOK
+
     await this.updateAvailableAndBorrowdBooks(borrow.id, statusBorrowValue.status);
     await this._borrowRepository.updateBorrow(statusBorrowValue, borrow.id);
-    if (penalty !== null) {
-      const updatePenaltyValues = {
-        isActive: false,
-      };
-      await this._penaltyRepository.updatePenalty(updatePenaltyValues, penalty.id);
-      const statusMemberValues = {
-        isPenalty: false,
-      };
-      await this._memberRepository.updateMember(
-        statusMemberValues,
-        borrow.memberId,
-      );
-    }
 
     result.isSuccess = true;
     result.statusCode = 200;
