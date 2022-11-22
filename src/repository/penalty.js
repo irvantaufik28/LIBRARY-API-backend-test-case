@@ -9,6 +9,7 @@ class PenaltyRepository {
     const result = await this._PenaltyModel.findOne({
       where: {
         id,
+        isActive: true,
       },
     });
     return result;
@@ -30,6 +31,15 @@ class PenaltyRepository {
 
   async deletePenalty(id) {
     const result = await this._PenaltyModel.destroy({
+      where: {
+        id,
+      },
+    });
+    return result;
+  }
+
+  async updatePenalty(data, id) {
+    const result = await this._PenaltyModel.update(data, {
       where: {
         id,
       },

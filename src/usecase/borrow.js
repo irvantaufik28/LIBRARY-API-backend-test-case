@@ -223,10 +223,6 @@ class BorrowUseCase {
     const statusValues = ['COMPLETED', 'CANCELED', 'SUMBITED'];
     for (let i = 0; i < statusValues.length; i += 1) {
       if (borrow.status === statusValues[i]) {
-        const borrowStatusValue = {
-          status: this._memberStatus.CANCELED,
-        };
-        await this._borrowRepository.updateBorrow(borrowStatusValue, borrow.id);
         result.reason = `cannot sumbit, status borrow is ${statusValues[i]}`;
         return result;
       }
@@ -270,12 +266,10 @@ class BorrowUseCase {
     //   check if member status PENALTY
 
     const member = await this._memberRepository.getMemberById(borrow.memberId);
-
+    const penalty = await this._penaltyRepository.getPenaltyByMemberId(
+      member.id,
+    );
     if (member.isPenalty === true) {
-      const penalty = await this._penaltyRepository.getPenaltyByMemberId(
-        member.id,
-      );
-
       let expriedPenalty = Date.parse(penalty.expiredAt);
       let currentDate = Date.parse(new Date());
       //  check expried penalty
@@ -299,6 +293,10 @@ class BorrowUseCase {
     // TODO UPDATE STOCK BOOK
     await this.updateAvailableAndBorrowdBooks(borrow.id, statusBorrowValue.status);
     await this._borrowRepository.updateBorrow(statusBorrowValue, borrow.id);
+    const updatePenaltyValues = {
+      isActive: false,
+    };
+    await this._penaltyRepository.updatePenalty(updatePenaltyValues, penalty.id);
     const statusMemberValues = {
       isPenalty: false,
     };
@@ -353,6 +351,8 @@ class BorrowUseCase {
       const penaltyValue = {
         memberId: updatedBorrow.memberId,
         expiredAt: new Date(currentDate.getTime() + dayToAdd * 86400000),
+        isActive: true,
+        borrowId: borrow.id,
       };
       await this._penaltyRepository.addPenalty(penaltyValue);
 

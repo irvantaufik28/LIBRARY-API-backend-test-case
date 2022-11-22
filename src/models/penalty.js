@@ -15,7 +15,9 @@ module.exports = (sequelize, DataTypes) => {
   }
   Penalty.init({
     memberId: DataTypes.INTEGER,
-    expiredAt: DataTypes.DATE
+    expiredAt: DataTypes.DATE,
+    isActive: DataTypes.BOOLEAN,
+    borrowId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Penalty',
